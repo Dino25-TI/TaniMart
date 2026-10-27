@@ -1,0 +1,1297 @@
+
+/* ===================================
+   TANIMART - DESIGN SYSTEM
+=================================== */
+
+:root {
+    --green-dark: #24583b;
+    --green-main: #34754a;
+    --green-light: #e7efe4;
+    --cream: #f8f7f0;
+    --white: #ffffff;
+    --text-main: #26392d;
+    --text-muted: #758176;
+    --border: #e7ebe3;
+    --shadow: 0 12px 35px rgba(36, 88, 59, 0.08);
+}
+
+/* Pengaturan dasar */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 24px;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--cream);
+    color: var(--text-main);
+    line-height: 1.6;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button {
+    font: inherit;
+    cursor: pointer;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+::selection {
+    background: var(--green-light);
+    color: var(--green-dark);
+}
+
+
+/* ===================================
+   NAVBAR
+=================================== */
+
+nav {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 18px 7%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 4px 18px rgba(36, 88, 59, 0.04);
+}
+
+.logo {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--green-dark);
+    letter-spacing: -0.5px;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.nav-links a {
+    position: relative;
+    color: #35483a;
+    font-size: 14px;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.nav-links a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 0;
+    height: 2px;
+    background: var(--green-main);
+    transition: width 0.2s ease;
+}
+
+.nav-links a:hover {
+    color: var(--green-main);
+}
+
+.nav-links a:hover::after {
+    width: 100%;
+}
+
+/* ===================================
+   HERO SECTION
+=================================== */
+
+.hero {
+    margin: 28px auto;
+    width: 88%;
+    min-height: 380px;
+    border-radius: 22px;
+    padding: 55px;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(120deg, #e5efdf 35%, #d0e2c8);
+    box-shadow: var(--shadow);
+}
+
+.hero-content {
+    max-width: 560px;
+}
+
+.tagline {
+    color: var(--green-main);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-bottom: 18px;
+}
+
+.hero h1 {
+    font-size: clamp(34px, 4vw, 52px);
+    line-height: 1.15;
+    letter-spacing: -1.2px;
+    margin-bottom: 20px;
+}
+
+.hero p {
+    color: #5b6e5e;
+    line-height: 1.8;
+    margin-bottom: 26px;
+}
+
+
+/* Ilustrasi tanaman pada hero */
+.hero {
+    justify-content: space-between;
+    gap: 32px;
+    overflow: hidden;
+}
+
+.hero-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.hero-illustration {
+    flex: 0 1 320px;
+    min-width: 0;
+    text-align: center;
+}
+
+.plant-circle {
+    width: 270px;
+    height: 270px;
+    max-width: 100%;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(36, 88, 59, 0.08);
+}
+
+.plant-leaf {
+    position: absolute;
+    font-size: 54px;
+    transition: transform 0.3s ease;
+}
+
+.leaf-one {
+    top: 45px;
+    left: 48px;
+    transform: rotate(-18deg);
+}
+
+.leaf-two {
+    top: 55px;
+    right: 43px;
+    transform: rotate(18deg);
+}
+
+.plant-pot {
+    font-size: 100px;
+    line-height: 1;
+    margin-top: 35px;
+}
+
+.hero-illustration:hover .leaf-one {
+    transform: rotate(-28deg) translateY(-4px);
+}
+
+.hero-illustration:hover .leaf-two {
+    transform: rotate(28deg) translateY(-4px);
+}
+
+.plant-caption {
+    color: var(--green-dark);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+@media (max-width: 700px) {
+    .hero {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 32px 24px;
+    }
+
+    .hero-illustration {
+        width: 100%;
+        align-self: center;
+    }
+
+    .plant-circle {
+        width: 220px;
+        height: 220px;
+    }
+
+    .plant-pot {
+        font-size: 82px;
+    }
+}
+
+
+/* ===================================
+   BUTTONS
+=================================== */
+
+.buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 14px 22px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 14px;
+    transition: transform 0.2s ease, background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.btn-primary {
+    background: var(--green-dark);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background: #19492b;
+    transform: translateY(-2px);
+    box-shadow: 0 7px 18px rgba(36, 88, 59, 0.18);
+}
+
+.btn-secondary {
+    border: 1px solid var(--green-dark);
+    color: var(--green-dark);
+    background: rgba(255, 255, 255, 0.35);
+}
+
+.btn-secondary:hover {
+    background: var(--white);
+    transform: translateY(-2px);
+}
+
+/* ===================================
+   HERO - POLISH
+=================================== */
+
+/* Label kecil di atas judul */
+.hero .tagline {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(52, 117, 74, 0.15);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.55);
+    font-size: 11px;
+    letter-spacing: 1.3px;
+}
+
+/* Judul utama */
+.hero h1 {
+    max-width: 560px;
+    font-weight: 800;
+    letter-spacing: -1.8px;
+    line-height: 1.12;
+}
+
+/* Deskripsi */
+.hero p {
+    max-width: 490px;
+    font-size: 15px;
+    line-height: 1.85;
+}
+
+/* Semua tombol hero */
+.hero .btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    min-height: 48px;
+    padding: 13px 21px;
+    border-radius: 12px;
+}
+
+/* Tombol utama */
+.hero .btn-primary {
+    box-shadow: 0 7px 16px rgba(36, 88, 59, 0.15);
+}
+
+.hero .btn-primary:hover {
+    box-shadow: 0 10px 22px rgba(36, 88, 59, 0.2);
+}
+
+/* Tombol sekunder */
+.hero .btn-secondary {
+    border-color: rgba(36, 88, 59, 0.25);
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* Fokus keyboard untuk aksesibilitas */
+.hero .btn:focus-visible {
+    outline: 3px solid #83b995;
+    outline-offset: 4px;
+}
+
+/* ===================================
+   GENERAL SECTION
+=================================== */
+
+.section {
+    width: 88%;
+    margin: 45px auto;
+}
+
+.section h2 {
+    font-size: 26px;
+    letter-spacing: -0.4px;
+    margin-bottom: 10px;
+}
+
+.section-description {
+    color: var(--text-muted);
+    margin-bottom: 24px;
+}
+
+/* ===================================
+   CATEGORY CARDS
+=================================== */
+
+.categories {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.category {
+    padding: 25px 15px;
+    border-radius: 16px;
+    background: var(--white);
+    text-align: center;
+    border: 1px solid var(--border);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.category:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow);
+}
+
+.category-icon {
+    font-size: 35px;
+    margin-bottom: 12px;
+}
+
+.category h3 {
+    font-size: 16px;
+    margin-bottom: 7px;
+}
+
+.category p {
+    font-size: 12px;
+    color: #7c887c;
+}
+
+/* ===================================
+   AI ASSISTANT SECTION
+=================================== */
+
+.ai-card {
+    padding: 30px;
+    background: linear-gradient(120deg, #234f35, #34754a);
+    color: var(--white);
+    border-radius: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    box-shadow: var(--shadow);
+}
+
+.ai-card p {
+    color: #d6e4d7;
+    margin-top: 10px;
+    line-height: 1.7;
+}
+
+.ai-button {
+    background: #e4efcf;
+    color: #234f35;
+    white-space: nowrap;
+}
+
+.ai-button:hover {
+    background: var(--white);
+    transform: translateY(-2px);
+}
+
+/* ===================================
+   FOOTER
+=================================== */
+
+footer {
+    margin-top: 55px;
+    padding: 25px;
+    text-align: center;
+    background: var(--white);
+    color: var(--text-muted);
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+}
+
+/* ===================================
+   RESPONSIVE DESIGN
+=================================== */
+
+@media (max-width: 700px) {
+    nav {
+        padding: 18px 6%;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .nav-links {
+        width: 100%;
+        gap: 18px;
+        flex-wrap: wrap;
+    }
+
+    .hero {
+        padding: 32px 24px;
+        width: 92%;
+    }
+
+    .section {
+        width: 92%;
+    }
+
+    .categories {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ai-card {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+/* ===================================
+   CATEGORY - MODERN CARDS
+=================================== */
+
+.categories {
+    gap: 22px;
+    align-items: stretch;
+}
+
+.category {
+    position: relative;
+    overflow: hidden;
+    padding: 28px 18px;
+    min-height: 190px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+
+    box-shadow: 0 5px 18px rgba(36, 88, 59, 0.035);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+}
+
+/* Aksen dekoratif pada kartu */
+.category::before {
+    content: "";
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    top: -45px;
+    right: -40px;
+    border-radius: 50%;
+    background: var(--green-light);
+    opacity: 0.65;
+    transition: transform 0.25s ease;
+}
+
+.category:hover {
+    transform: translateY(-6px);
+    border-color: #c9ddca;
+    box-shadow: 0 14px 30px rgba(36, 88, 59, 0.09);
+}
+
+.category:hover::before {
+    transform: scale(1.35);
+}
+
+/* Ikon kategori */
+.category-icon {
+    position: relative;
+    z-index: 1;
+
+    width: 66px;
+    height: 66px;
+    margin-bottom: 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 18px;
+    background: #f0f5eb;
+    font-size: 34px;
+
+    transition: transform 0.25s ease;
+}
+
+.category:hover .category-icon {
+    transform: scale(1.08) rotate(-3deg);
+}
+
+/* Judul kategori */
+.category h3 {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 6px;
+    color: var(--text-main);
+    font-size: 15px;
+    font-weight: 700;
+    text-align: center;
+}
+
+/* Deskripsi kategori */
+.category p {
+    position: relative;
+    z-index: 1;
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1.6;
+    text-align: center;
+}
+
+/* Tata letak tablet dan HP */
+@media (max-width: 700px) {
+    .categories {
+        gap: 14px;
+    }
+
+    .category {
+        min-height: 175px;
+        padding: 22px 12px;
+        border-radius: 16px;
+    }
+
+    .category-icon {
+        width: 58px;
+        height: 58px;
+        font-size: 30px;
+    }
+}
+
+/* ===================================
+   FEATURED PRODUCTS
+=================================== */
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.product-card {
+    overflow: hidden;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 5px 18px rgba(36, 88, 59, 0.035);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 14px 30px rgba(36, 88, 59, 0.09);
+}
+
+/* Area gambar produk */
+.product-image {
+    position: relative;
+    min-height: 190px;
+    aspect-ratio: 4 / 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #edf3e8;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+}
+
+.product-card:hover .product-image img {
+    transform: scale(1.05);
+}
+
+/* Label kategori atau status produk */
+.product-badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 1;
+
+    padding: 6px 11px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.94);
+    color: var(--green-dark);
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* Informasi produk */
+.product-info {
+    padding: 20px;
+}
+
+.product-category {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-bottom: 7px;
+}
+
+.product-name {
+    color: var(--text-main);
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.45;
+    margin-bottom: 10px;
+}
+
+.product-price {
+    color: var(--green-dark);
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 16px;
+}
+
+/* Tombol aksi produk */
+.product-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.product-actions .btn {
+    flex: 1;
+    text-align: center;
+    padding: 11px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+.product-actions .btn-primary {
+    border: 1px solid var(--green-dark);
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+    .product-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* HP */
+@media (max-width: 520px) {
+    .product-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .product-info {
+        padding: 17px;
+    }
+}
+
+/* ===================================
+   PRODUCT SECTION
+=================================== */
+
+.product-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    margin-bottom: 26px;
+}
+
+.product-heading .section-description {
+    max-width: 540px;
+    margin-bottom: 0;
+}
+
+.product-eyebrow {
+    display: inline-block;
+    color: var(--green-main);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+    margin-bottom: 8px;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.product-card {
+    overflow: hidden;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: 0 5px 18px rgba(36, 88, 59, 0.035);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow);
+}
+
+.product-image {
+    position: relative;
+    min-height: 190px;
+    aspect-ratio: 4 / 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #edf3e8;
+    overflow: hidden;
+}
+
+.image-sage {
+    background: #e1ecdf;
+}
+
+.image-cream {
+    background: #f4eddf;
+}
+
+.product-emoji {
+    font-size: 76px;
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover .product-emoji {
+    transform: scale(1.1) rotate(-4deg);
+}
+
+.product-badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    padding: 6px 11px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--green-dark);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.product-info {
+    padding: 20px;
+}
+
+.product-category {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-bottom: 6px;
+}
+
+.product-name {
+    color: var(--text-main);
+    font-size: 17px;
+    line-height: 1.45;
+    margin-bottom: 8px;
+}
+
+.product-description {
+    min-height: 48px;
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.product-bottom {
+    display: grid;
+    grid-template-columns: 1fr 42px;
+    align-items: center;
+    gap: 14px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.product-price {
+    margin: 0;
+    align-self: center;
+    color: var(--green-dark);
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.4;
+}
+
+.add-cart {
+    position: relative;
+    top: -2px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+
+    padding: 0;
+    border: none;
+    border-radius: 12px;
+
+    background: var(--green-dark);
+    color: var(--white);
+
+    font-size: 30px;
+    font-weight: 400;
+    line-height: 1;
+    padding-bottom: 8px;
+
+    box-shadow: 0 4px 10px rgba(36, 88, 59, 0.12);
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.add-cart:hover {
+    background: var(--green-main);
+    transform: translateY(-2px);
+}
+
+.add-cart:active {
+    transform: scale(0.96);
+}
+
+.add-cart:focus-visible {
+    outline: 3px solid #83b995;
+    outline-offset: 3px;
+}
+
+@media (max-width: 900px) {
+    .product-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .product-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .product-grid {
+        grid-template-columns: 1fr;
+    }
+}
+.cart-empty {
+    max-width: 620px;
+    margin: 35px auto;
+    padding: 55px 24px;
+    text-align: center;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+}
+
+.cart-empty-icon {
+    margin-bottom: 18px;
+    font-size: 58px;
+}
+
+.cart-empty h2 {
+    margin-bottom: 10px;
+    color: var(--text-main);
+    font-size: 22px;
+}
+
+.cart-empty p {
+    margin-bottom: 24px;
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.7;
+}
+.cart-list {
+    max-width: 760px;
+    margin: 35px auto;
+    padding: 24px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.cart-item-info h3 {
+    margin-bottom: 8px;
+    color: var(--text-main);
+    font-size: 16px;
+}
+
+.cart-item-info p {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.cart-subtotal {
+    color: var(--green-dark);
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.cart-total {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 24px;
+    color: var(--text-main);
+}
+
+.cart-total strong {
+    color: var(--green-dark);
+    font-size: 20px;
+}
+
+@media (max-width: 520px) {
+    .cart-list {
+        padding: 16px;
+    }
+
+    .cart-item {
+        gap: 12px;
+    }
+
+    .cart-total strong {
+        font-size: 16px;
+    }
+}
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.quantity-controls form {
+    margin: 0;
+}
+
+.quantity-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--green-light);
+    color: var(--green-dark);
+    font-size: 20px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.quantity-btn:hover {
+    background: #d5e5d2;
+}
+
+.quantity-number {
+    min-width: 20px;
+    color: var(--text-main);
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+}
+.remove-cart {
+    padding: 8px 12px;
+    border: 1px solid #ead7d2;
+    border-radius: 9px;
+    background: #fff8f6;
+    color: #a34d40;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.remove-cart:hover {
+    background: #fbe8e3;
+}
+.checkout-layout {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 24px;
+    max-width: 1000px;
+    margin: 32px auto;
+    align-items: start;
+}
+
+.checkout-form,
+.checkout-summary {
+    padding: 28px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+}
+
+.checkout-form h2,
+.checkout-summary h2 {
+    margin-bottom: 22px;
+    color: var(--text-main);
+    font-size: 20px;
+}
+
+.checkout-form label {
+    display: block;
+    margin: 16px 0 8px;
+    color: var(--text-main);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.checkout-form input,
+.checkout-form textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--text-main);
+    font: inherit;
+    font-size: 14px;
+}
+
+.checkout-form input:focus,
+.checkout-form textarea:focus {
+    outline: 2px solid #b9d4b9;
+    border-color: var(--green-main);
+}
+
+.checkout-form textarea {
+    resize: vertical;
+    margin-bottom: 22px;
+}
+
+.checkout-form .btn {
+    width: 100%;
+    cursor: pointer;
+}
+
+.summary-item,
+.summary-total {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.summary-item strong {
+    white-space: nowrap;
+}
+
+.summary-total {
+    margin-top: 8px;
+    border-bottom: none;
+    color: var(--green-dark);
+    font-size: 16px;
+    font-weight: 700;
+}
+
+@media (max-width: 700px) {
+    .checkout-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .checkout-form,
+    .checkout-summary {
+        padding: 20px;
+    }
+}
+
+.order-success {
+    max-width: 720px;
+    margin: 30px auto;
+    padding: 36px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+}
+
+.success-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 22px;
+    border-radius: 50%;
+    background: var(--green-light);
+    color: var(--green-dark);
+    font-size: 34px;
+    font-weight: 800;
+}
+
+.order-success > .success-icon,
+.order-success > .product-eyebrow,
+.order-success > h1,
+.order-success > .success-description {
+    text-align: center;
+}
+
+.order-success > .product-eyebrow {
+    display: block;
+}
+
+.order-success > h1 {
+    margin: 10px 0;
+    color: var(--green-dark);
+    font-size: 28px;
+}
+
+.success-description {
+    margin-bottom: 24px;
+    color: var(--text-muted);
+    line-height: 1.7;
+}
+
+.order-number {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 18px;
+    border: 1px dashed #b8cdb6;
+    border-radius: 14px;
+    background: #f6f9f3;
+    text-align: center;
+}
+
+.order-number span,
+.order-detail p span {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.order-number strong {
+    color: var(--green-dark);
+    font-size: 19px;
+}
+
+.order-detail {
+    margin: 28px 0;
+}
+
+.order-detail h2 {
+    margin-bottom: 18px;
+    color: var(--text-main);
+    font-size: 19px;
+}
+
+.order-detail > p,
+.order-products p,
+.order-total {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.6;
+}
+
+.order-detail p strong,
+.order-products p strong {
+    max-width: 60%;
+    color: var(--text-main);
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+.order-total {
+    margin-top: 12px;
+    border-bottom: none;
+    color: var(--green-dark);
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.order-success > .btn {
+    display: flex;
+    justify-content: center;
+}
+
+@media (max-width: 520px) {
+    .order-success {
+        padding: 22px 16px;
+    }
+
+    .order-success > h1 {
+        font-size: 23px;
+    }
+}
