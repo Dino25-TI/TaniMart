@@ -15,9 +15,10 @@
         <div class="logo">🌱 TaniMart</div>
 
         <div class="nav-links">
+            <a href="{{ url('/keranjang') }}">Keranjang</a>
             <a href="#">Beranda</a>
             <a href="#kategori">Kategori</a>
-            <a href="#ai">Asisten AI</a>
+            <a href="{{ url('/konsultasi') }}">Asisten AI</a>
             <a href="#produk">Produk</a>
         </div>
     </nav>
@@ -38,7 +39,7 @@
                     Jelajahi Produk →
                 </a>
 
-                <a href="#ai" class="btn btn-secondary">
+                <a href="{{ url('/konsultasi') }}" class="btn btn-secondary">
                     ✨ Tanya AI
                 </a>
             </div>
@@ -51,30 +52,35 @@
             Temukan perlengkapan sesuai kebutuhan tanammu.
         </p>
 
-        <div class="categories">
-            <div class="category">
-                <div class="category-icon">🌱</div>
-                <h3>Bibit Tanaman</h3>
-                <p>Mulai dari benih berkualitas</p>
-            </div>
 
-            <div class="category">
-                <div class="category-icon">🪴</div>
-                <h3>Pot & Media Tanam</h3>
-                <p>Tempat tumbuh tanamanmu</p>
-            </div>
+<div class="categories">
 
-            <div class="category">
-                <div class="category-icon">🌿</div>
-                <h3>Pupuk</h3>
-                <p>Dukung pertumbuhan tanaman</p>
-            </div>
+    <a href="/?kategori=bibit#produk" class="category">
+        <div class="category-icon">🌱</div>
+        <h3>Bibit Tanaman</h3>
+        <p>Mulai dari benih berkualitas</p>
+    </a>
 
-            <div class="category">
-                <div class="category-icon">🧰</div>
-                <h3>Alat Pertanian</h3>
-                <p>Perlengkapan untuk berkebun</p>
-            </div>
+    <a href="/?kategori=pot-media#produk" class="category">
+        <div class="category-icon">🪴</div>
+        <h3>Pot & Media Tanam</h3>
+        <p>Tempat tumbuh tanamanmu</p>
+    </a>
+
+    <a href="/?kategori=pupuk#produk" class="category">
+        <div class="category-icon">🌿</div>
+        <h3>Pupuk</h3>
+        <p>Dukung pertumbuhan tanaman</p>
+    </a>
+
+    <a href="/?kategori=alat#produk" class="category">
+        <div class="category-icon">🧰</div>
+        <h3>Alat Pertanian</h3>
+        <p>Perlengkapan untuk berkebun</p>
+    </a>
+
+</div>
+
         </div>
     </section>
 
@@ -88,7 +94,7 @@
                 </p>
             </div>
 
-            <a href="#ai" class="btn ai-button">
+            <a href="{{ url('/konsultasi') }}" class="btn ai-button">
                 Kenali Asisten AI →
             </a>
         </div>
@@ -111,86 +117,92 @@
             </a>
         </div>
 
-        <div class="product-grid">
+@if ($kategori)
+    <div class="category-filter-info">
+        <span>Menampilkan produk berdasarkan kategori</span>
 
-            <!-- Produk 1 -->
-            <article class="product-card">
-                <div class="product-image">
-                    <span class="product-emoji">🌶️</span>
-                    <span class="product-badge">Bibit</span>
-                </div>
+        <a href="{{ url('/') }}#produk">
+            ✕ Lihat Semua Produk
+        </a>
+    </div>
+@endif
 
-                <div class="product-info">
-                    <p class="product-category">Benih Sayuran</p>
-                    <h3 class="product-name">Benih Cabai Merah</h3>
-                    <p class="product-description">
-                        Pilihan benih untuk memulai kebun cabai di rumah.
+ <div class="product-grid">
+
+    @forelse ($products as $product)
+
+        @php
+            $emoji = [
+                'cabai' => '🌶️',
+                'media-tanam' => '🌱',
+                'pot' => '🪴',
+            ][$product->slug] ?? '🌿';
+        @endphp
+
+        <article class="product-card">
+
+            <div class="product-image">
+                <span class="product-emoji">
+                    {{ $emoji }}
+                </span>
+
+                <span class="product-badge">
+                    {{ $product->category->name }}
+                </span>
+            </div>
+
+            <div class="product-info">
+
+                <p class="product-category">
+                    {{ $product->category->name }}
+                </p>
+
+                <h3 class="product-name">
+                    {{ $product->name }}
+                </h3>
+
+                <p class="product-description">
+                    {{ $product->description }}
+                </p>
+
+                <p>Stok: {{ $product->stock }}</p>
+
+                <div class="product-bottom">
+
+                    <p class="product-price">
+                        Rp{{ number_format($product->price, 0, ',', '.') }}
                     </p>
-                    <div class="product-bottom">
-                        <p class="product-price">Rp15.000</p>
-                        <form action="{{ url('/keranjang/tambah/cabai') }}" method="POST">
-                                @csrf
-                            <button class="add-cart" type="submit"
-                                aria-label="Tambah Benih Cabai Merah ke keranjang">
-                                +
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </article>
 
-        <!-- Produk 2 -->
-            <article class="product-card">
-                <div class="product-image image-sage">
-                    <span class="product-emoji">🌱</span>
-                    <span class="product-badge">Populer</span>
-                </div>
+                    <form
+                        action="{{ url('/keranjang/tambah/' . $product->slug) }}"
+                        method="POST">
 
-                <div class="product-info">
-                    <p class="product-category">Media Tanam</p>
-                    <h3 class="product-name">Media Tanam Organik</h3>
-                    <p class="product-description">
-                        Media tanam untuk membantu kebutuhan awal tanaman.
-                    </p>
-                    <div class="product-bottom">
-                        <p class="product-price">Rp25.000</p>
-                        <form action="{{ url('/keranjang/tambah/media-tanam') }}" method="POST">
-                            @csrf
-                            <button class="add-cart" type="submit"
-                                aria-label="Tambah Benih Cabai Merah ke keranjang">
-                                +
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </article>
+                        @csrf
 
-        <!-- Produk 3 -->
-            <article class="product-card">
-                <div class="product-image image-cream">
-                    <span class="product-emoji">🪴</span>
-                    <span class="product-badge">Perlengkapan</span>
+                        <button
+                            class="add-cart"
+                            type="submit"
+                            aria-label="Tambah {{ $product->name }} ke keranjang"
+                            @disabled($product->stock <= 0)>
+                            +
+                        </button>
+
+                    </form>
+
                 </div>
 
-                <div class="product-info">
-                    <p class="product-category">Pot Tanaman</p>
-                    <h3 class="product-name">Pot Tanaman Minimalis</h3>
-                    <p class="product-description">
-                        Pot sederhana untuk tanaman di halaman atau balkon.
-                    </p>
-                    <div class="product-bottom">
-                        <p class="product-price">Rp20.000</p>
-                        <form action="{{ url('/keranjang/tambah/pot') }}" method="POST">
-                                @csrf
-                            <button class="add-cart" type="submit"
-                                aria-label="Tambah Benih Cabai Merah ke keranjang">
-                                +
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </article>
+            </div>
 
+        </article>
+
+@empty
+    <p>
+        Belum ada produk untuk kategori ini.
+        Silakan pilih kategori lainnya.
+    </p>
+    @endforelse
+
+</div>
         </div>
     </section>
 

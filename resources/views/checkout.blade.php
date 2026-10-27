@@ -20,27 +20,39 @@
     <main class="section">
         <span class="product-eyebrow">SATU LANGKAH LAGI</span>
         <h1>Checkout</h1>
-        <p class="section-description">
-            Lengkapi informasi penerima sebelum mengonfirmasi pesananmu.
-        </p>
+<p class="section-description">
+    Lengkapi informasi penerima sebelum mengonfirmasi pesananmu.
+</p>
 
-        <div class="checkout-layout">
+{{-- Menampilkan pesan error dari Laravel --}}
+@if ($errors->any())
+    <div style="color: #b42318; margin: 16px 0;">
+        @foreach ($errors->all() as $error)
+            <p>{{ $error }}</p>
+        @endforeach
+    </div>
+@endif
+
+<div class="checkout-layout">
             <form action="{{ url('/checkout') }}" method="POST" class="checkout-form">
                 @csrf
 
                 <h2>Informasi Penerima</h2>
 
                 <label for="nama">Nama lengkap</label>
-                <input id="nama" type="text" name="nama"
-                    placeholder="Masukkan nama penerima" required>
+               <input id="nama" type="text" name="nama"
+    value="{{ old('nama') }}"
+    placeholder="Masukkan nama penerima" required>
 
                 <label for="telepon">Nomor telepon</label>
                 <input id="telepon" type="tel" name="telepon"
-                    placeholder="Contoh: 081234567890" required>
+    value="{{ old('telepon') }}"
+    placeholder="Contoh: 081234567890" required>
 
                 <label for="alamat">Alamat lengkap</label>
                 <textarea id="alamat" name="alamat" rows="4"
-                    placeholder="Nama jalan, nomor rumah, kota..." required></textarea>
+    placeholder="Nama jalan, nomor rumah, kota..."
+    required>{{ old('alamat') }}</textarea>
 
                 <button type="submit" class="btn btn-primary">
                     Konfirmasi Pesanan

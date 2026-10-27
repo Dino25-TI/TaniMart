@@ -1295,3 +1295,236 @@ footer {
         font-size: 23px;
     }
 }
+
+
+/* ==========================
+   KONSULTASI AI TANIMART
+========================== */
+
+.ai-consultation {
+    max-width: 850px;
+    margin: 30px auto;
+}
+
+.ai-box {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 18px;
+    margin-bottom: 24px;
+    border: 1px solid #e0e9df;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+}
+
+.ai-box form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.ai-box label {
+    display: block;
+    font-weight: 600;
+    color: #244b35;
+}
+
+.ai-box textarea {
+    display: block;
+    width: 100%;
+    min-height: 140px;
+    box-sizing: border-box;
+    padding: 16px;
+    font: inherit;
+    font-size: 15px;
+    line-height: 1.6;
+    border: 1px solid #cadccc;
+    border-radius: 12px;
+    background: #ffffff;
+    resize: vertical;
+}
+
+.ai-box textarea:focus {
+    outline: none;
+    border-color: #2e7050;
+    box-shadow: 0 0 0 3px rgba(46, 112, 80, 0.12);
+}
+
+.ai-box .btn {
+    align-self: flex-start;
+}
+
+.ai-box h2 {
+    color: #24563c;
+    margin-bottom: 18px;
+}
+
+.ai-answer {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    line-height: 1.8;
+    color: #334c3c;
+    margin-bottom: 20px;
+}
+
+.ai-error {
+    background: #fff1f0;
+    color: #b42318;
+    padding: 14px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+}
+
+@media (max-width: 600px) {
+    .ai-box {
+        padding: 20px;
+    }
+
+    .ai-box .btn {
+        width: 100%;
+    }
+}
+/* =====================================
+   TANIAI - CHAT UI
+===================================== */
+
+.ai-chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 25px;
+}
+
+.ai-chat-header h2 {
+    margin: 0;
+}
+
+.ai-chat-header form {
+    margin: 0;
+}
+
+/* Area percakapan */
+.ai-chat-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    width: 100%;
+}
+
+/* Kotak pesan */
+.ai-message {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    width: fit-content;
+    max-width: 80%;
+    box-sizing: border-box;
+
+    padding: 15px 20px;
+    border-radius: 16px;
+
+    line-height: 1.7;
+    white-space: normal;
+    overflow-wrap: anywhere;
+
+    margin: 0;
+}
+
+/* Nama pengirim */
+.ai-message-label {
+    display: block;
+    font-weight: 700;
+    margin: 0;
+}
+
+/* Isi pesan */
+.ai-message-content {
+    display: block;
+
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    line-height: 1.7;
+
+    margin: 0;
+}
+
+/* Pesan pengguna */
+.ai-user {
+    align-self: flex-end;
+
+    background: #e0f0e4;
+    color: #214d35;
+
+    border-radius: 16px 16px 4px 16px;
+}
+
+/* Pesan Gemini */
+.ai-bot {
+    align-self: flex-start;
+
+    background: #f5f7f3;
+    color: #273e30;
+
+    border: 1px solid #e0e9df;
+    border-radius: 16px 16px 16px 4px;
+}
+
+/* Tampilan HP */
+@media (max-width: 600px) {
+    .ai-message {
+        max-width: 94%;
+        padding: 13px 15px;
+    }
+
+    .ai-chat-header {
+        align-items: flex-start;
+    }
+}
+
+/* KATEGORI YANG BISA DIKLIK */
+
+a.category {
+    display: flex;
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+a.category:hover {
+    border-color: #93bea0;
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(36, 88, 59, 0.12);
+}
+
+a.category:focus-visible {
+    outline: 3px solid #34754a;
+    outline-offset: 3px;
+}
+
+/* Supaya judul produk tidak tertutup navbar */
+#produk {
+    scroll-margin-top: 105px;
+}
+
+/* Informasi filter kategori */
+
+.category-filter-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    background: #e7efe4;
+    color: #24583b;
+    padding: 14px 20px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+}
+
+.category-filter-info a {
+    font-weight: 700;
+    color: #24583b;
+    text-decoration: underline;
+}
