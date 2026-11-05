@@ -19,6 +19,11 @@
     </nav>
 
     <main class="section">
+        @if (session('error'))
+    <p style="color: #b42318; margin-bottom: 16px;">
+        {{ session('error') }}
+    </p>
+@endif
         <span class="product-eyebrow">BELANJA LEBIH MUDAH</span>
         <h1>Keranjang Belanja</h1>
         <p class="section-description">
@@ -84,6 +89,11 @@
                 ) }}
             </strong>
         </div>
+        <a href="{{ url('/checkout') }}"
+   class="btn btn-primary"
+   style="margin-top: 20px;">
+    Lanjut Checkout →
+</a>
     </div>
 @else
     <div class="cart-empty">
