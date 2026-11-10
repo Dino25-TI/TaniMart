@@ -13,19 +13,11 @@
 
     <link rel="stylesheet"
           href="{{ asset('css/taniai-chat.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
 
-<nav>
-    <a href="/" class="logo">🌱 TaniMart</a>
-
-    <div class="nav-links">
-        <a href="/">Beranda</a>
-        <a href="/#produk">Produk</a>
-        <a href="/konsultasi">Konsultasi AI</a>
-        <a href="/keranjang">Keranjang</a>
-    </div>
-</nav>
+@include('partials.navbar')
 
 <main class="section tm-chat-page">
 
@@ -77,7 +69,7 @@
                         {{ $pesan['role'] === 'user' ? '👤 Kamu' : '🌱 TaniAI' }}
                     </span>
 
-                    <div class="tm-chat-body">{{ $pesan['content'] }}</div>
+                    <div class="tm-chat-body">{!! nl2br(e($pesan['content'])) !!}</div>
 
                 </article>
 
