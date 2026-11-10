@@ -6,16 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pesanan Berhasil | TaniMart</title>
     <link rel="stylesheet" href="{{ asset('css/tanimart.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-    <nav>
-        <a href="/" class="logo">TaniMart🌱</a>
-
-        <div class="nav-links">
-            <a href="/">Beranda</a>
-            <a href="/#produk">Produk</a>
-        </div>
-    </nav>
+    @include('partials.navbar')
 
     <main class="section">
         <div class="order-success">
