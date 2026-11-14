@@ -7,6 +7,9 @@
           content="width=device-width, initial-scale=1.0">
 
     <title>TaniAI | Konsultasi Tanaman</title>
+<link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+<meta name="description" content="TaniMart — Marketplace pertanian modern. Temukan bibit, pupuk, alat berkebun, dan konsultasi AI untuk petani Indonesia.">
+<meta name="theme-color" content="#34754a">
 
     <link rel="stylesheet"
           href="{{ asset('css/tanimart.css') }}">

@@ -1,9 +1,12 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola Produk Jualan Saya | TaniMart</title>
+<link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+<meta name="description" content="TaniMart � Marketplace pertanian modern. Temukan bibit, pupuk, alat berkebun, dan konsultasi AI untuk petani Indonesia.">
+<meta name="theme-color" content="#34754a">
     <link rel="stylesheet" href="{{ asset('css/tanimart.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -269,7 +272,7 @@
                 <p>Kelola semua barang pertanian dan hasil kebun yang Anda pasarkan di TaniMart</p>
             </div>
 
-            <a href="/jual-produk" class="btn-add-product">
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;"><a href="/pesanan-masuk" style="display: inline-flex; align-items: center; gap: 8px; padding: 0.85rem 1.4rem; background: #e0f2fe; color: #0369a1; border: 1.5px solid #bae6fd; border-radius: 14px; font-weight: 700; font-size: 0.95rem; text-decoration: none;"><i class="fa-solid fa-store"></i><span>Pesanan Masuk Toko</span></a><a href="/jual-produk" class="btn-add-product">
                 <i class="fa-solid fa-plus"></i>
                 <span>Pasang Produk Baru</span>
             </a>
@@ -403,6 +406,7 @@
 
     </main>
 
+@include('partials.footer')
 </body>
 </html>
 

@@ -1,5 +1,6 @@
-@php
-    $cartItems = session('keranjang', []);
+﻿@php
+    $cartKey = auth()->check() ? 'keranjang_user_' . auth()->id() : 'keranjang_guest';
+    $cartItems = session($cartKey, session('keranjang', []));
     $cartTotalQty = 0;
     foreach ($cartItems as $item) {
         $cartTotalQty += ($item['jumlah'] ?? 1);
@@ -24,7 +25,7 @@
         <!-- Navigation Links Container -->
         <div class="tm-navbar-collapse" id="tmNavbarMenu">
             <div class="tm-nav-main">
-                <a href="/" class="tm-nav-link {{ request()->is('/') ? 'active' : '' }}">
+                <a href="/" class="tm-nav-link {{ request()->is('/') && !request('q') && !request('kategori') ? 'active' : '' }}">
                     <i class="fa-solid fa-house"></i> Beranda
                 </a>
                 <a href="/#kategori" class="tm-nav-link">
@@ -39,14 +40,36 @@
                 </a>
 
                 @auth
+                    {{-- Nav Pesanan Saya ala Shopee --}}
+                    <a href="{{ route('pesanan.saya') }}" class="tm-nav-link {{ request()->is('pesanan*') ? 'active' : '' }}" title="Pantau Pesanan Saya">
+                        <i class="fa-solid fa-bag-shopping" style="color: #34754a;"></i> Pesanan Saya
+                    </a>
+
+                    {{-- Jika penjual/petani, tampilkan Pesanan Masuk Toko --}}
+                    @if(auth()->user()->products()->count() > 0)
+                        <a href="{{ route('pesanan.penjual') }}" class="tm-nav-link {{ request()->is('pesanan-masuk*') ? 'active' : '' }}" title="Kelola Pesanan Masuk Toko">
+                            <i class="fa-solid fa-store" style="color: #0284c7;"></i> Pesanan Masuk
+                        </a>
+                    @endif
+
                     <a href="{{ route('products.create') }}" class="tm-nav-link tm-nav-sell {{ request()->is('jual-produk*') ? 'active' : '' }}">
                         <i class="fa-solid fa-circle-plus"></i> Jual Produk
                     </a>
-                    <a href="{{ route('products.my') }}" class="tm-nav-link {{ request()->is('produk-saya*') ? 'active' : '' }}">
-                        <i class="fa-solid fa-box-archive"></i> Produk Saya
-                    </a>
                 @endauth
             </div>
+
+            <!-- Global Search Bar -->
+            <form action="/" method="GET" class="tm-nav-search-form">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input 
+                    type="text" 
+                    name="q" 
+                    placeholder="Cari bibit, pupuk, pot..." 
+                    value="{{ request('q') }}" 
+                    autocomplete="off"
+                    aria-label="Pencarian produk"
+                >
+            </form>
 
             <div class="tm-nav-actions">
                 <!-- Cart Button -->
@@ -81,9 +104,8 @@
                         </a>
                     @endif
 
-                    <!-- Unified Account Capsule: Avatar + Name + Divider + Logout -->
+                    <!-- Unified Account Capsule -->
                     <div class="tm-account-capsule">
-                        <!-- User Dropdown Trigger -->
                         <div class="tm-user-dropdown" id="tmUserDropdownContainer">
                             <button type="button" class="tm-user-trigger" onclick="toggleUserDropdown(event)" aria-label="Menu Akun Saya">
                                 <div class="tm-avatar-circle">
@@ -117,9 +139,21 @@
                                     </a>
                                 @endif
 
-                                <a href="{{ route('products.create') }}" class="tm-dropdown-item">
-                                    <i class="fa-solid fa-circle-plus"></i>
-                                    <span>Jual Produk Baru</span>
+                                <a href="{{ route('pesanan.saya') }}" class="tm-dropdown-item" style="color: #166534; font-weight: 700;">
+                                    <i class="fa-solid fa-bag-shopping" style="color: #34754a;"></i>
+                                    <span>Pesanan Saya (Shopee)</span>
+                                </a>
+
+                                @if(auth()->user()->products()->count() > 0)
+                                    <a href="{{ route('pesanan.penjual') }}" class="tm-dropdown-item" style="color: #0369a1; font-weight: 700;">
+                                        <i class="fa-solid fa-store" style="color: #0284c7;"></i>
+                                        <span>Pesanan Masuk Toko</span>
+                                    </a>
+                                @endif
+
+                                <a href="{{ route('profil') }}" class="tm-dropdown-item">
+                                    <i class="fa-solid fa-user-gear"></i>
+                                    <span>Profil Saya</span>
                                 </a>
 
                                 <a href="{{ route('products.my') }}" class="tm-dropdown-item">
@@ -150,7 +184,7 @@
                         <!-- Capsule Divider -->
                         <div class="tm-capsule-sep"></div>
 
-                        <!-- Logout Button — nestled inside capsule -->
+                        <!-- Quick Logout Button -->
                         <form action="{{ route('logout') }}" method="POST" style="margin:0;">
                             @csrf
                             <button type="submit" class="tm-capsule-logout" title="Keluar dari akun">

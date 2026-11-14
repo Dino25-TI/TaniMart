@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\KonsultasiController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\OrderController;
 use App\Models\Product;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -53,6 +54,7 @@ Route::get('/products', fn() => redirect('/#produk'));
 Route::get('/ai', fn() => redirect()->route('konsultasi'));
 Route::get('/chat', fn() => redirect()->route('chat.index'));
 Route::get('/inbox', fn() => redirect()->route('chat.index'));
+Route::get('/pesanan', fn() => redirect()->route('pesanan.saya'));
 
 // ===================================
 // HALAMAN KHUSUS ADMINISTRATOR
@@ -64,9 +66,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 });
 
 // ===================================
-// FITUR JUAL PRODUK & PRODUK SAYA (User Login)
+// FITUR PENGGUNA TERAUTENTIKASI (User Login)
 // ===================================
 Route::middleware('auth')->group(function () {
+    // Kelola Produk Jualan
     Route::get('/jual-produk', [ProductController::class, 'create'])->name('products.create');
     Route::post('/jual-produk', [ProductController::class, 'store'])->name('products.store');
     Route::get('/produk-saya', [ProductController::class, 'myProducts'])->name('products.my');
@@ -78,35 +81,198 @@ Route::middleware('auth')->group(function () {
     // Fitur Chat Pembeli & Penjual (Gaya Shopee)
     Route::get('/pesan', [ChatController::class, 'index'])->name('chat.index');
     Route::post('/pesan/{user}', [ChatController::class, 'store'])->name('chat.store');
+
+    // Profil Saya
+    Route::get('/profil', function () {
+        return view('auth.profil', ['user' => auth()->user()]);
+    })->name('profil');
+
+    Route::post('/profil', function (Request $request) {
+        $validated = $request->validate([
+            'name' => 'required|string|max:100',
+            'phone' => 'nullable|string|max:20',
+            'password' => 'nullable|string|min:6|confirmed',
+        ]);
+
+        $user = auth()->user();
+        $user->name = $validated['name'];
+        if (isset($validated['phone'])) {
+            $user->phone = $validated['phone'];
+        }
+        if (!empty($validated['password'])) {
+            $user->password = bcrypt($validated['password']);
+        }
+        $user->save();
+
+        return back()->with('success', 'Profil Anda berhasil diperbarui!');
+    })->name('profil.update');
+
+    // ==========================================
+    // SISTEM PESANAN SHOPEE-STYLE (ISOLASI 100% PER AKUN)
+    // ==========================================
+    // 1. Sisi Pembeli: Pesanan Saya
+    Route::get('/pesanan-saya', [OrderController::class, 'myOrders'])->name('pesanan.saya');
+    Route::get('/riwayat-pesanan', fn() => redirect()->route('pesanan.saya'))->name('pesanan.riwayat');
+
+    // Aksi Pembeli
+    Route::post('/pesanan/{order}/bayar', [OrderController::class, 'pay'])->name('pesanan.pay');
+    Route::post('/pesanan/{order}/batal', [OrderController::class, 'cancel'])->name('pesanan.cancel');
+    Route::post('/pesanan/{order}/terima', [OrderController::class, 'confirmReceived'])->name('pesanan.confirm');
+    Route::post('/pesanan/item/{item}/nilai', [OrderController::class, 'submitReview'])->name('pesanan.review');
+
+    // 2. Sisi Penjual: Pesanan Masuk Toko
+    Route::get('/pesanan-masuk', [OrderController::class, 'sellerOrders'])->name('pesanan.penjual');
+    Route::post('/pesanan/{order}/kirim', [OrderController::class, 'shipOrder'])->name('pesanan.ship');
+
+    // ===================================
+    // CHECKOUT (WAJIB LOGIN - EKSKLUSIF PER AKUN)
+    // ===================================
+    Route::get('/checkout', function () {
+        $cartKey = 'keranjang_user_' . auth()->id();
+        $keranjang = session()->get($cartKey, session()->get('keranjang', []));
+
+        if (empty($keranjang)) {
+            return redirect('/keranjang')->with('error', 'Keranjang belanja Anda masih kosong.');
+        }
+
+        return view('checkout', compact('keranjang'));
+    })->name('checkout');
+
+    Route::post('/checkout', function (Request $request) {
+        $data = $request->validate([
+            'nama' => 'required|string|max:100',
+            'telepon' => 'required|string|max:20',
+            'alamat' => 'required|string|max:500',
+            'metode_bayar' => 'nullable|string|max:50',
+        ]);
+
+        $cartKey = 'keranjang_user_' . auth()->id();
+        $keranjang = session()->get($cartKey, session()->get('keranjang', []));
+
+        if (empty($keranjang)) {
+            return redirect('/keranjang')->with('error', 'Keranjang belanja Anda kosong.');
+        }
+
+        $total = collect($keranjang)->sum(
+            fn ($item) => $item['harga'] * $item['jumlah']
+        );
+
+        $orderNumber = 'TM-' . strtoupper(Str::random(8));
+        $isCod = ($data['metode_bayar'] ?? '') === 'COD (Bayar di Tempat)';
+
+        // SIMPAN KE DATABASE: EKSKLUSIF DENGAN USER_ID AKUN SAAT INI
+        $order = Order::create([
+            'user_id' => auth()->id(), // STRICT: Pesanan hanya milik akun ini
+            'order_number' => $orderNumber,
+            'customer_name' => $data['nama'],
+            'customer_phone' => $data['telepon'],
+            'customer_address' => $data['alamat'],
+            'total' => $total,
+            'payment_method' => $data['metode_bayar'] ?? 'Transfer Bank',
+            'shipping_courier' => 'Kurir TaniExpress',
+            'status' => $isCod ? 'dikemas' : 'belum_bayar',
+            'paid_at' => $isCod ? now() : null,
+        ]);
+
+        foreach ($keranjang as $item) {
+            $prod = is_numeric($item['id'] ?? null) ? Product::find($item['id']) : null;
+            $sellerId = $prod ? $prod->user_id : null;
+
+            OrderItem::create([
+                'order_id' => $order->id,
+                'product_id' => $prod ? $prod->id : null,
+                'seller_id' => $sellerId, // Terhubung ke penjual produk tersebut
+                'product_name' => $item['nama'],
+                'quantity' => $item['jumlah'],
+                'price' => $item['harga'],
+                'subtotal' => $item['harga'] * $item['jumlah'],
+            ]);
+        }
+
+        $pesanan = [
+            'nomor' => $orderNumber,
+            'penerima' => $data,
+            'produk' => $keranjang,
+            'total' => $total,
+            'metode' => $data['metode_bayar'] ?? 'Transfer Bank',
+            'tanggal' => now()->format('d-m-Y H:i'),
+        ];
+
+        session()->put('pesanan_terakhir', $pesanan);
+
+        // Hapus keranjang khusus akun ini
+        session()->forget($cartKey);
+        session()->forget('keranjang');
+
+        return redirect('/pesanan-berhasil')->with('success', 'Pesanan berhasil dibuat!');
+    });
 });
 
 // ===================================
-// BERANDA / PASAR
+// BERANDA / PASAR (Pencarian & Filter)
 // ===================================
 Route::get('/', function (Request $request) {
     $kategori = $request->query('kategori');
+    $q = trim($request->query('q', ''));
+    $sort = $request->query('sort', 'terbaru');
 
-    $query = Product::with('user');
+    $query = Product::with('user')->where('status', 'tersedia');
 
     if ($kategori) {
-        $query->where('category', 'like', "%{$kategori}%")
-              ->orWhere('slug', 'like', "%{$kategori}%");
+        $query->where('category', 'like', "%{$kategori}%");
     }
 
-    $products = $query->where('status', 'tersedia')->latest()->get();
+    if ($q) {
+        $query->where(function($sq) use ($q) {
+            $sq->where('name', 'like', "%{$q}%")
+               ->orWhere('description', 'like', "%{$q}%")
+               ->orWhere('category', 'like', "%{$q}%")
+               ->orWhere('location', 'like', "%{$q}%");
+        });
+    }
 
-    return view('welcome', compact('products', 'kategori'));
+    if ($sort === 'termurah') {
+        $query->orderBy('price', 'asc');
+    } elseif ($sort === 'termahal') {
+        $query->orderBy('price', 'desc');
+    } else {
+        $query->latest();
+    }
+
+    $products = $query->get();
+
+    $recommended = collect();
+    if ($products->isEmpty() && ($q || $kategori)) {
+        $recommended = Product::with('user')->where('status', 'tersedia')->latest()->take(4)->get();
+    }
+
+    return view('welcome', compact('products', 'kategori', 'q', 'sort', 'recommended'));
 });
 
 // ===================================
-// KERANJANG BELANJA
+// HALAMAN DETAIL PRODUK
+// ===================================
+Route::get('/produk/{product:slug}', function (Product $product) {
+    $related = Product::with('user')
+        ->where('category', $product->category)
+        ->where('id', '!=', $product->id)
+        ->where('status', 'tersedia')
+        ->limit(4)
+        ->get();
+
+    return view('products.show', compact('product', 'related'));
+})->name('products.show');
+
+// ===================================
+// KERANJANG BELANJA (TERISOLASI PER AKUN)
 // ===================================
 Route::get('/keranjang', function () {
-    return view('keranjang');
+    $cartKey = auth()->check() ? 'keranjang_user_' . auth()->id() : 'keranjang_guest';
+    $keranjang = session()->get($cartKey, session()->get('keranjang', []));
+    return view('keranjang', compact('keranjang'));
 });
 
 Route::post('/keranjang/tambah/{produk}', function ($produk) {
-    // Cari produk di DB via ID atau slug
     $item = Product::with('user')->where('id', $produk)->orWhere('slug', $produk)->first();
 
     if ($item) {
@@ -134,7 +300,8 @@ Route::post('/keranjang/tambah/{produk}', function ($produk) {
         $data = $daftarProduk[$produk];
     }
 
-    $keranjang = session()->get('keranjang', []);
+    $cartKey = auth()->check() ? 'keranjang_user_' . auth()->id() : 'keranjang_guest';
+    $keranjang = session()->get($cartKey, session()->get('keranjang', []));
 
     if (isset($keranjang[$key])) {
         $keranjang[$key]['jumlah']++;
@@ -145,13 +312,15 @@ Route::post('/keranjang/tambah/{produk}', function ($produk) {
         ];
     }
 
+    session()->put($cartKey, $keranjang);
     session()->put('keranjang', $keranjang);
 
     return redirect('/keranjang')->with('success', 'Produk berhasil ditambahkan ke keranjang!');
 });
 
 Route::post('/keranjang/ubah/{produk}', function ($produk) {
-    $keranjang = session()->get('keranjang', []);
+    $cartKey = auth()->check() ? 'keranjang_user_' . auth()->id() : 'keranjang_guest';
+    $keranjang = session()->get($cartKey, session()->get('keranjang', []));
 
     if (!isset($keranjang[$produk])) {
         return redirect('/keranjang');
@@ -169,91 +338,23 @@ Route::post('/keranjang/ubah/{produk}', function ($produk) {
         }
     }
 
+    session()->put($cartKey, $keranjang);
     session()->put('keranjang', $keranjang);
 
     return redirect('/keranjang');
 });
 
 Route::post('/keranjang/hapus/{produk}', function ($produk) {
-    $keranjang = session()->get('keranjang', []);
+    $cartKey = auth()->check() ? 'keranjang_user_' . auth()->id() : 'keranjang_guest';
+    $keranjang = session()->get($cartKey, session()->get('keranjang', []));
 
     if (isset($keranjang[$produk])) {
         unset($keranjang[$produk]);
+        session()->put($cartKey, $keranjang);
         session()->put('keranjang', $keranjang);
     }
 
     return redirect('/keranjang');
-});
-
-// ===================================
-// CHECKOUT & PESANAN
-// ===================================
-Route::get('/checkout', function () {
-    $keranjang = session()->get('keranjang', []);
-
-    if (empty($keranjang)) {
-        return redirect('/keranjang');
-    }
-
-    return view('checkout', compact('keranjang'));
-});
-
-Route::post('/checkout', function (Request $request) {
-    $data = $request->validate([
-        'nama' => 'required|string|max:100',
-        'telepon' => 'required|string|max:20',
-        'alamat' => 'required|string|max:500',
-    ]);
-
-    $keranjang = session()->get('keranjang', []);
-
-    if (empty($keranjang)) {
-        return redirect('/keranjang');
-    }
-
-    $total = collect($keranjang)->sum(
-        fn ($item) => $item['harga'] * $item['jumlah']
-    );
-
-    $orderNumber = 'TM-' . strtoupper(Str::random(8));
-
-    // Simpan ke database jika tabel orders tersedia
-    try {
-        $order = Order::create([
-            'order_number' => $orderNumber,
-            'customer_name' => $data['nama'],
-            'customer_phone' => $data['telepon'],
-            'customer_address' => $data['alamat'],
-            'total' => $total,
-            'status' => 'pending',
-        ]);
-
-        foreach ($keranjang as $item) {
-            OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => is_numeric($item['id'] ?? null) ? $item['id'] : null,
-                'product_name' => $item['nama'],
-                'quantity' => $item['jumlah'],
-                'price' => $item['harga'],
-                'subtotal' => $item['harga'] * $item['jumlah'],
-            ]);
-        }
-    } catch (\Exception $e) {
-        // Fallback jika tidak menggunakan database orders
-    }
-
-    $pesanan = [
-        'nomor' => $orderNumber,
-        'penerima' => $data,
-        'produk' => $keranjang,
-        'total' => $total,
-        'tanggal' => now()->format('d-m-Y H:i'),
-    ];
-
-    session()->put('pesanan_terakhir', $pesanan);
-    session()->forget('keranjang');
-
-    return redirect('/pesanan-berhasil');
 });
 
 Route::get('/pesanan-berhasil', function () {

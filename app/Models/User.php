@@ -50,6 +50,22 @@ class User extends Authenticatable
     }
 
     /**
+     * Pesanan yang dibuat oleh pengguna ini (sebagai pembeli)
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    /**
+     * Item pesanan produk yang masuk ke toko pengguna ini (sebagai penjual)
+     */
+    public function sellerOrderItems()
+    {
+        return $this->hasMany(OrderItem::class, 'seller_id');
+    }
+
+    /**
      * Pesan yang dikirim
      */
     public function sentMessages()
