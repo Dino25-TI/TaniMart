@@ -93,29 +93,29 @@
                 <h2><i class="fa-solid fa-address-card" style="color: #34754a;"></i> Informasi Penerima</h2>
 
                 <label for="nama">Nama Lengkap</label>
-                <input 
-                    id="nama" 
-                    type="text" 
+                <input
+                    id="nama"
+                    type="text"
                     name="nama"
                     value="{{ old('nama', auth()->check() ? auth()->user()->name : '') }}"
-                    placeholder="Masukkan nama penerima" 
+                    placeholder="Masukkan nama penerima"
                     required
                 >
 
                 <label for="telepon">Nomor Telepon / WhatsApp</label>
-                <input 
-                    id="telepon" 
-                    type="tel" 
+                <input
+                    id="telepon"
+                    type="tel"
                     name="telepon"
                     value="{{ old('telepon', auth()->check() ? auth()->user()->phone : '') }}"
-                    placeholder="Contoh: 081234567890" 
+                    placeholder="Contoh: 081234567890"
                     required
                 >
 
                 <label for="alamat">Alamat Lengkap Pengiriman</label>
-                <textarea 
-                    id="alamat" 
-                    name="alamat" 
+                <textarea
+                    id="alamat"
+                    name="alamat"
                     rows="3"
                     placeholder="Nama jalan, nomor rumah, RT/RW, kelurahan, kecamatan, kota..."
                     required
