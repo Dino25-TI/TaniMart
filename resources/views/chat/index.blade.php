@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pesan & Chat Penjual | TaniMart</title>
+<link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+<meta name="description" content="TaniMart — Marketplace pertanian modern. Temukan bibit, pupuk, alat berkebun, dan konsultasi AI untuk petani Indonesia.">
+<meta name="theme-color" content="#34754a">
     <link rel="stylesheet" href="{{ asset('css/tanimart.css') }}">
     <link rel="stylesheet" href="{{ asset('css/tanimart-chat.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
