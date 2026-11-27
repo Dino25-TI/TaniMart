@@ -2,15 +2,17 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+
 use App\Http\Controllers\CancellationController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\KonsultasiController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\TaniAiHistoryController;
+
 use App\Models\Product;
 
 /*
@@ -47,6 +49,7 @@ Route::post('/logout', [
     AuthController::class, 'logout'
 ])->name('logout')->middleware('auth');
 
+
 // ===================================
 // SHORTCUT RUTE PINTAS
 // ===================================
@@ -74,7 +77,9 @@ Route::get('/jual',
 );
 
 Route::get('/kategori', fn() => redirect('/#kategori'));
+
 Route::get('/produk', fn() => redirect('/#produk'));
+
 Route::get('/products', fn() => redirect('/#produk'));
 
 Route::get('/ai',
@@ -92,6 +97,7 @@ Route::get('/inbox',
 Route::get('/pesanan',
     fn() => redirect()->route('pesanan.saya')
 );
+
 
 // ===================================
 // HALAMAN ADMIN
@@ -115,6 +121,7 @@ Route::prefix('admin')
         ])->name('users.delete');
 
     });
+
 
 // ===================================
 // FITUR PENGGUNA LOGIN
@@ -152,7 +159,8 @@ Route::middleware('auth')->group(function () {
         ProductController::class, 'toggleStatus'
     ])->name('products.toggle-status');
 
-    // CHAT
+
+    // CHAT ANTAR PENGGUNA
 
     Route::get('/pesan', [
         ChatController::class, 'index'
@@ -161,6 +169,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/pesan/{user}', [
         ChatController::class, 'store'
     ])->name('chat.store');
+
 
     // PROFIL
 
@@ -181,6 +190,7 @@ Route::middleware('auth')->group(function () {
         ]);
 
         $user = auth()->user();
+
         $user->name = $validated['name'];
 
         if (isset($validated['phone'])) {
@@ -200,6 +210,7 @@ Route::middleware('auth')->group(function () {
 
     })->name('profil.update');
 
+
     // PESANAN PEMBELI
 
     Route::get('/pesanan-saya', [
@@ -209,6 +220,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/riwayat-pesanan',
         fn() => redirect()->route('pesanan.saya')
     )->name('pesanan.riwayat');
+
 
     // AKSI PEMBELI
 
@@ -232,6 +244,7 @@ Route::middleware('auth')->group(function () {
         OrderController::class, 'submitReview'
     ])->name('pesanan.review');
 
+
     // AKSI PENJUAL
 
     Route::get('/pesanan-masuk', [
@@ -246,6 +259,7 @@ Route::middleware('auth')->group(function () {
         OrderController::class, 'shipOrder'
     ])->name('pesanan.ship');
 
+
     // CHECKOUT DATABASE
 
     Route::get('/checkout', [
@@ -257,6 +271,7 @@ Route::middleware('auth')->group(function () {
     ])->name('checkout.store');
 
 });
+
 
 // ===================================
 // FITUR BARU: AUTOCOMPLETE PRODUK
@@ -380,6 +395,7 @@ Route::get('/pencarian/saran', function (Request $request) {
 
 })->middleware('throttle:120,1')
   ->name('products.suggestions');
+
 
 // ===================================
 // BERANDA / PASAR
@@ -507,6 +523,7 @@ Route::get('/', function (Request $request) {
 
 });
 
+
 // ===================================
 // HALAMAN DETAIL PRODUK
 // ===================================
@@ -526,6 +543,7 @@ Route::get('/produk/{product:slug}', function (Product $product) {
     );
 
 })->name('products.show');
+
 
 // ===================================
 // KERANJANG BELANJA
@@ -551,6 +569,7 @@ Route::middleware('auth')->group(function () {
 
 });
 
+
 // ===================================
 // HALAMAN PESANAN BERHASIL
 // ===================================
@@ -570,19 +589,29 @@ Route::get('/pesanan-berhasil', function () {
 
 });
 
+
 // ===================================
-// KONSULTASI AI TANIMART
+// TANIAI - KONSULTASI DAN RIWAYAT PERCAKAPAN
 // ===================================
 
+// Halaman konsultasi dan riwayat per akun
 Route::get('/konsultasi', [
-    KonsultasiController::class, 'index'
+    TaniAiHistoryController::class, 'index'
 ])->name('konsultasi');
 
+// Kirim pertanyaan ke Gemini / AI lokal dan simpan riwayat
 Route::post('/konsultasi', [
-    KonsultasiController::class, 'tanya'
+    TaniAiHistoryController::class, 'tanya'
 ])->middleware('throttle:10,1')
   ->name('konsultasi.tanya');
 
+// Mulai percakapan baru tanpa menghapus riwayat lama
 Route::post('/konsultasi/reset', [
-    KonsultasiController::class, 'reset'
+    TaniAiHistoryController::class, 'reset'
 ])->name('konsultasi.reset');
+
+// Hapus satu percakapan milik akun yang sedang login
+Route::delete('/konsultasi/riwayat/{conversation}', [
+    TaniAiHistoryController::class, 'destroyConversation'
+])->middleware('auth')
+  ->name('konsultasi.riwayat.hapus');
