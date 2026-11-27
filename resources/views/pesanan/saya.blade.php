@@ -1,12 +1,15 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pesanan Saya | TaniMart</title>
+
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
     <link rel="stylesheet" href="{{ asset('css/tanimart.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
         .shopee-orders-wrapper {
             max-width: 960px;
@@ -30,12 +33,12 @@
             margin-bottom: 1.5rem;
         }
 
-        /* Shopee Navigation Tabs Bar */
+        /* NAVIGASI TAB */
         .shopee-tabs-nav {
             display: flex;
             background: #ffffff;
             border-radius: 16px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
             border: 1px solid #e2e8f0;
             overflow-x: auto;
             margin-bottom: 1.5rem;
@@ -90,22 +93,21 @@
             color: #475569;
         }
 
-        /* Shopee Order Card */
+        /* KARTU PESANAN */
         .shopee-order-card {
             background: #ffffff;
             border-radius: 18px;
             border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.03);
             margin-bottom: 1.5rem;
             overflow: hidden;
             transition: box-shadow 0.2s;
         }
 
         .shopee-order-card:hover {
-            box-shadow: 0 8px 24px rgba(36, 88, 59, 0.08);
+            box-shadow: 0 8px 24px rgba(36,88,59,0.08);
         }
 
-        /* Card Header */
         .shopee-card-header {
             padding: 1rem 1.4rem;
             background: #fafbfa;
@@ -161,7 +163,7 @@
             letter-spacing: 0.5px;
         }
 
-        /* Card Items */
+        /* INFORMASI PRODUK */
         .shopee-items-container {
             padding: 1.25rem 1.4rem;
         }
@@ -242,7 +244,7 @@
             color: #94a3b8;
         }
 
-        /* Review snippet if already reviewed */
+        /* RATING & REVIEW */
         .shopee-reviewed-box {
             background: #fefce8;
             border: 1px solid #fef08a;
@@ -261,7 +263,7 @@
             font-size: 0.9rem;
         }
 
-        /* Card Footer */
+        /* FOOTER KARTU PESANAN */
         .shopee-card-footer {
             padding: 1.1rem 1.4rem;
             background: #fbfcfb;
@@ -319,19 +321,27 @@
             flex-wrap: wrap;
         }
 
-        .shopee-btn-pay {
-            background: #ea580c;
-            color: #ffffff;
-            border: none;
-            padding: 0.55rem 1.2rem;
+        /* TOMBOL PESANAN */
+        .shopee-btn-pay,
+        .shopee-btn-receive,
+        .shopee-btn-rate,
+        .shopee-btn-cancel {
+            padding: 0.55rem 1rem;
             border-radius: 10px;
-            font-size: 0.88rem;
+            font-size: 0.85rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 6px;
             transition: all 0.2s;
+        }
+
+        .shopee-btn-pay {
+            background: #ea580c;
+            color: #ffffff;
+            border: none;
         }
 
         .shopee-btn-pay:hover {
@@ -343,12 +353,6 @@
             background: #ffffff;
             color: #64748b;
             border: 1px solid #cbd5e1;
-            padding: 0.55rem 1rem;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
         }
 
         .shopee-btn-cancel:hover {
@@ -361,15 +365,6 @@
             background: #16a34a;
             color: #ffffff;
             border: none;
-            padding: 0.55rem 1.2rem;
-            border-radius: 10px;
-            font-size: 0.88rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s;
         }
 
         .shopee-btn-receive:hover {
@@ -381,15 +376,6 @@
             background: #fef08a;
             color: #854d0e;
             border: 1px solid #fde047;
-            padding: 0.55rem 1.1rem;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s;
         }
 
         .shopee-btn-rate:hover {
@@ -397,12 +383,112 @@
             color: #713f12;
         }
 
-        /* Review Modal */
+        .shopee-btn-pay:disabled,
+        .shopee-btn-cancel:disabled {
+            cursor: not-allowed;
+            opacity: 0.55;
+        }
+
+        /* FORM PEMBATALAN */
+        .cancel-request-form {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .cancel-reason-select {
+            width: 190px;
+            max-width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 9px 10px;
+            color: #334155;
+            background: #ffffff;
+            font-size: 0.85rem;
+        }
+
+        .cancel-reason-select:focus {
+            outline: none;
+            border-color: #34754a;
+        }
+
+        .cancel-request-status {
+            display: inline-flex;
+            gap: 6px;
+            align-items: center;
+            font-size: 0.82rem;
+            font-weight: 600;
+            padding: 8px 10px;
+            border-radius: 10px;
+        }
+
+        .cancel-request-status.waiting {
+            background: #fffbeb;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+
+        .cancel-request-status.rejected {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .cancel-request-status.refund {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
+        }
+
+        .cancel-request-help {
+            color: #64748b;
+            font-size: 0.77rem;
+            line-height: 1.5;
+            max-width: 300px;
+        }
+
+        /* FITUR BARU: BATAS 3 KALI PENGAJUAN */
+        .cancel-attempt-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+            border-radius: 9px;
+            padding: 7px 10px;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .cancel-attempt-badge.limit {
+            background: #f1f5f9;
+            color: #64748b;
+            border-color: #cbd5e1;
+        }
+
+        .cancel-retry-btn {
+            background: #fff7ed;
+            color: #c2410c;
+            border: 1px solid #fdba74;
+        }
+
+        .cancel-retry-btn:hover {
+            background: #ffedd5;
+            color: #9a3412;
+            border-color: #fb923c;
+        }
+
+        /* RATING MODAL */
         .rating-modal-backdrop {
             display: none;
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
             z-index: 1000;
             align-items: center;
             justify-content: center;
@@ -424,8 +510,14 @@
         }
 
         @keyframes modalFadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .star-picker {
@@ -448,7 +540,7 @@
             transform: scale(1.15);
         }
 
-        /* Empty State */
+        /* KONDISI PESANAN KOSONG */
         .shopee-empty-state {
             text-align: center;
             padding: 4rem 1.5rem;
@@ -462,325 +554,958 @@
             margin-bottom: 1rem;
             display: block;
         }
+
+        @media (max-width: 640px) {
+            .shopee-card-footer {
+                align-items: flex-start;
+            }
+
+            .shopee-actions-bar {
+                width: 100%;
+            }
+
+            .shopee-item-row {
+                gap: 0.75rem;
+            }
+
+            .shopee-item-pricing {
+                max-width: 100px;
+            }
+        }
     </style>
 </head>
-<body>
 
+<body>
     @include('partials.navbar')
 
     <main class="shopee-orders-wrapper">
 
-        {{-- Flash Messages --}}
+        {{-- NOTIFIKASI BERHASIL --}}
         @if(session('success'))
             <div class="site-toast site-toast-success" id="toastMsg">
                 <span>✅ {{ session('success') }}</span>
-                <span style="cursor: pointer; opacity: 0.7; margin-left: 8px;" onclick="this.parentElement.remove()">✕</span>
+                <span
+                    style="cursor:pointer;opacity:0.7;margin-left:8px;"
+                    onclick="this.parentElement.remove()"
+                >✕</span>
             </div>
-            <script>setTimeout(() => { const el = document.getElementById('toastMsg'); if(el) el.remove(); }, 5000);</script>
         @endif
 
+        {{-- NOTIFIKASI ERROR --}}
         @if(session('error'))
             <div class="site-toast site-toast-error" id="toastMsg">
                 <span>⚠️ {{ session('error') }}</span>
-                <span style="cursor: pointer; opacity: 0.7; margin-left: 8px;" onclick="this.parentElement.remove()">✕</span>
+                <span
+                    style="cursor:pointer;opacity:0.7;margin-left:8px;"
+                    onclick="this.parentElement.remove()"
+                >✕</span>
             </div>
-            <script>setTimeout(() => { const el = document.getElementById('toastMsg'); if(el) el.remove(); }, 5000);</script>
         @endif
 
-        {{-- Page Heading --}}
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+        @if($errors->any())
+            <div
+                class="site-toast site-toast-error"
+                style="position:relative;margin-bottom:1rem;"
+            >
+                <span>⚠️ {{ $errors->first() }}</span>
+            </div>
+        @endif
+
+        {{-- HEADER HALAMAN --}}
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-end;
+            flex-wrap:wrap;
+            gap:1rem;
+            margin-bottom:1rem;
+        ">
             <div>
                 <h1 class="shopee-page-title">
-                    <i class="fa-solid fa-bag-shopping" style="color: #34754a;"></i>
+                    <i
+                        class="fa-solid fa-bag-shopping"
+                        style="color:#34754a;"
+                    ></i>
                     Pesanan Saya
                 </h1>
-                <p class="shopee-page-desc">Pantau status pembayaran, proses pengemasan, pelacakan kurir, dan beri ulasan.</p>
+
+                <p class="shopee-page-desc">
+                    Pantau status pembayaran, proses pengemasan,
+                    pelacakan kurir, dan beri ulasan.
+                </p>
             </div>
 
-            {{-- Jika user juga punya produk/menjual produk, tampilkan tombol ke Pesanan Masuk Toko --}}
+            {{-- AKSES HALAMAN PENJUAL --}}
             @if(auth()->user()->products()->count() > 0)
-                <a href="{{ route('pesanan.penjual') }}" style="display: inline-flex; align-items: center; gap: 6px; padding: 0.65rem 1.2rem; background: #e8f5ed; color: #166534; border: 1.5px solid #a3d9b4; border-radius: 12px; font-weight: 700; font-size: 0.88rem; text-decoration: none;">
-                    <i class="fa-solid fa-store"></i> Buka Pesanan Masuk Toko Saya →
+                <a
+                    href="{{ route('pesanan.penjual') }}"
+                    style="
+                        display:inline-flex;
+                        align-items:center;
+                        gap:6px;
+                        padding:0.65rem 1.2rem;
+                        background:#e8f5ed;
+                        color:#166534;
+                        border:1.5px solid #a3d9b4;
+                        border-radius:12px;
+                        font-weight:700;
+                        font-size:0.88rem;
+                        text-decoration:none;
+                    "
+                >
+                    <i class="fa-solid fa-store"></i>
+                    Buka Pesanan Masuk Toko Saya →
                 </a>
             @endif
         </div>
 
-        {{-- Shopee Navigation Tabs Bar --}}
+        {{-- TAB STATUS PESANAN --}}
         <div class="shopee-tabs-nav">
-            <a href="{{ route('pesanan.saya', ['tab' => 'semua']) }}" class="shopee-tab-btn {{ $statusTab === 'semua' ? 'active' : '' }}">
-                <span>Semua</span>
+
+            <a
+                href="{{ route('pesanan.saya', ['tab' => 'semua']) }}"
+                class="shopee-tab-btn {{ $statusTab === 'semua' ? 'active' : '' }}"
+            >
+                Semua
                 @if(($counts['semua'] ?? 0) > 0)
-                    <span class="tab-badge tab-badge-dim">{{ $counts['semua'] }}</span>
+                    <span class="tab-badge tab-badge-dim">
+                        {{ $counts['semua'] }}
+                    </span>
                 @endif
             </a>
 
-            <a href="{{ route('pesanan.saya', ['tab' => 'belum_bayar']) }}" class="shopee-tab-btn {{ $statusTab === 'belum_bayar' ? 'active' : '' }}">
-                <span>Belum Bayar</span>
+            <a
+                href="{{ route('pesanan.saya', ['tab' => 'belum_bayar']) }}"
+                class="shopee-tab-btn {{ $statusTab === 'belum_bayar' ? 'active' : '' }}"
+            >
+                Belum Bayar
                 @if(($counts['belum_bayar'] ?? 0) > 0)
-                    <span class="tab-badge">{{ $counts['belum_bayar'] }}</span>
+                    <span class="tab-badge">
+                        {{ $counts['belum_bayar'] }}
+                    </span>
                 @endif
             </a>
 
-            <a href="{{ route('pesanan.saya', ['tab' => 'dikemas']) }}" class="shopee-tab-btn {{ $statusTab === 'dikemas' ? 'active' : '' }}">
-                <span>Dikemas</span>
+            <a
+                href="{{ route('pesanan.saya', ['tab' => 'dikemas']) }}"
+                class="shopee-tab-btn {{ $statusTab === 'dikemas' ? 'active' : '' }}"
+            >
+                Dikemas
                 @if(($counts['dikemas'] ?? 0) > 0)
-                    <span class="tab-badge" style="background:#2563eb;">{{ $counts['dikemas'] }}</span>
+                    <span class="tab-badge" style="background:#2563eb;">
+                        {{ $counts['dikemas'] }}
+                    </span>
                 @endif
             </a>
 
-            <a href="{{ route('pesanan.saya', ['tab' => 'dikirim']) }}" class="shopee-tab-btn {{ $statusTab === 'dikirim' ? 'active' : '' }}">
-                <span>Dikirim</span>
+            <a
+                href="{{ route('pesanan.saya', ['tab' => 'dikirim']) }}"
+                class="shopee-tab-btn {{ $statusTab === 'dikirim' ? 'active' : '' }}"
+            >
+                Dikirim
                 @if(($counts['dikirim'] ?? 0) > 0)
-                    <span class="tab-badge" style="background:#0284c7;">{{ $counts['dikirim'] }}</span>
+                    <span class="tab-badge" style="background:#0284c7;">
+                        {{ $counts['dikirim'] }}
+                    </span>
                 @endif
             </a>
 
-            <a href="{{ route('pesanan.saya', ['tab' => 'selesai']) }}" class="shopee-tab-btn {{ $statusTab === 'selesai' ? 'active' : '' }}">
-                <span>Selesai</span>
+            <a
+                href="{{ route('pesanan.saya', ['tab' => 'selesai']) }}"
+                class="shopee-tab-btn {{ $statusTab === 'selesai' ? 'active' : '' }}"
+            >
+                Selesai
                 @if(($counts['selesai'] ?? 0) > 0)
-                    <span class="tab-badge" style="background:#16a34a;">{{ $counts['selesai'] }}</span>
+                    <span class="tab-badge" style="background:#16a34a;">
+                        {{ $counts['selesai'] }}
+                    </span>
                 @endif
             </a>
 
-            <a href="{{ route('pesanan.saya', ['tab' => 'dibatalkan']) }}" class="shopee-tab-btn {{ $statusTab === 'dibatalkan' ? 'active' : '' }}">
-                <span>Dibatalkan</span>
+            <a
+                href="{{ route('pesanan.saya', ['tab' => 'dibatalkan']) }}"
+                class="shopee-tab-btn {{ $statusTab === 'dibatalkan' ? 'active' : '' }}"
+            >
+                Dibatalkan
                 @if(($counts['dibatalkan'] ?? 0) > 0)
-                    <span class="tab-badge tab-badge-dim">{{ $counts['dibatalkan'] }}</span>
+                    <span class="tab-badge tab-badge-dim">
+                        {{ $counts['dibatalkan'] }}
+                    </span>
                 @endif
             </a>
         </div>
 
-        {{-- Order Cards List --}}
+        {{-- DAFTAR PESANAN --}}
         @forelse($orders as $order)
+
             @php
+                /*
+                 * =================================================
+                 * SISTEM PEMBATALAN MAKSIMAL 3 KALI
+                 * =================================================
+                 *
+                 * 0/3 = Belum mengajukan.
+                 * 1/3 = Masih ada 2 kesempatan.
+                 * 2/3 = Masih ada 1 kesempatan.
+                 * 3/3 = Batas pengajuan tercapai.
+                 *
+                 * Penolakan sebelumnya tidak otomatis
+                 * menghilangkan tombol pengajuan ulang.
+                 */
+
+                $maxCancelAttempts = 3;
+
+                $cancelAttempts = max(
+                    0,
+                    (int) ($order->cancellation_attempts ?? 0)
+                );
+
+                $remainingCancelAttempts = max(
+                    0,
+                    $maxCancelAttempts - $cancelAttempts
+                );
+
+                $cancellationWorkflowReady =
+                    \Illuminate\Support\Facades\Route::has(
+                        'pesanan.cancel'
+                    ) &&
+                    method_exists(
+                        $order,
+                        'cancellationApprovals'
+                    );
+
+                $cancelRows = $cancellationWorkflowReady
+                    ? $order->cancellationApprovals
+                    : collect();
+
+                /*
+                 * Ambil status pengajuan terakhir yang
+                 * tersimpan pada relasi persetujuan seller.
+                 */
+
+                $cancelRejected = $cancelRows->contains(
+                    'status',
+                    'rejected'
+                );
+
+                $cancelPending = !$cancelRejected &&
+                    $cancelRows->contains(
+                        'status',
+                        'pending'
+                    );
+
+                $cancelApproved = !$cancelRejected &&
+                    !$cancelPending &&
+                    $cancelRows->contains(
+                        'status',
+                        'approved'
+                    );
+
+                /*
+                 * Hanya pesanan yang belum dikirim
+                 * dan belum selesai boleh dibatalkan.
+                 */
+
+                $isCancelableStage = in_array(
+                    $order->shopee_status,
+                    ['belum_bayar', 'dikemas'],
+                    true
+                ) && $order->shipped_at === null;
+
+                /*
+                 * PERBAIKAN UTAMA:
+                 *
+                 * Jika permintaan ditolak, pembeli boleh
+                 * mengajukan ulang selama attempts < 3.
+                 *
+                 * Saat masih pending atau menunggu
+                 * persetujuan seller lain, tidak boleh
+                 * membuat permintaan baru.
+                 */
+
+                $canRequestCancel =
+                    $cancellationWorkflowReady &&
+                    $isCancelableStage &&
+                    $cancelAttempts < $maxCancelAttempts &&
+                    !$cancelPending &&
+                    !$cancelApproved &&
+                    (
+                        $cancelRows->isEmpty() ||
+                        $cancelRejected
+                    );
+
+                $cancelLimitReached =
+                    $cancelAttempts >= $maxCancelAttempts;
+
+                $nextCancelAttempt = min(
+                    $maxCancelAttempts,
+                    $cancelAttempts + 1
+                );
+
+                /*
+                 * Informasi status dan seller.
+                 */
+
                 $stInfo = $order->status_info;
-                // Ambil penjual dari item pertama jika ada
+
                 $firstItem = $order->items->first();
-                $seller = $firstItem && $firstItem->seller ? $firstItem->seller : ($firstItem && $firstItem->product ? $firstItem->product->user : null);
+
+                $seller = $firstItem && $firstItem->seller
+                    ? $firstItem->seller
+                    : (
+                        $firstItem && $firstItem->product
+                            ? $firstItem->product->user
+                            : null
+                    );
             @endphp
 
             <div class="shopee-order-card">
-                
-                {{-- Card Header: Nama Toko / Penjual + Status --}}
+
+                {{-- HEADER KARTU --}}
                 <div class="shopee-card-header">
-                    <div style="display: flex; align-items: center; gap: 10px;">
+
+                    <div style="
+                        display:flex;
+                        align-items:center;
+                        gap:10px;
+                    ">
                         <div class="shopee-seller-brand">
                             <i class="fa-solid fa-shop"></i>
-                            <span>{{ $seller ? $seller->name : 'TaniMart Mitra' }}</span>
+
+                            <span>
+                                {{ $seller ? $seller->name : 'TaniMart Mitra' }}
+                            </span>
                         </div>
 
-                        @if($seller && $seller->id !== auth()->id())
-                            <a href="{{ route('chat.index', ['user_id' => $seller->id]) }}" class="btn-chat-store" title="Hubungi penjual pesanan ini">
-                                <i class="fa-solid fa-comments"></i> Chat Penjual
+                        @if($seller && (int) $seller->id !== (int) auth()->id())
+                            <a
+                                href="{{ route('chat.index', ['user_id' => $seller->id]) }}"
+                                class="btn-chat-store"
+                                title="Hubungi penjual pesanan ini"
+                            >
+                                <i class="fa-solid fa-comments"></i>
+                                Chat Penjual
                             </a>
                         @endif
                     </div>
 
-                    <span class="shopee-status-pill" style="color: {{ $stInfo['color'] }}; background: {{ $stInfo['bg'] }};">
+                    <span
+                        class="shopee-status-pill"
+                        style="
+                            color:{{ $stInfo['color'] }};
+                            background:{{ $stInfo['bg'] }};
+                        "
+                    >
                         <i class="{{ $stInfo['icon'] }}"></i>
                         {{ $stInfo['label'] }}
                     </span>
                 </div>
 
-                {{-- Card Items List --}}
+                {{-- DAFTAR PRODUK PESANAN --}}
                 <div class="shopee-items-container">
+
                     @foreach($order->items as $item)
+
                         <div class="shopee-item-row">
+
                             <div class="shopee-item-thumb">
                                 @if($item->product && $item->product->image)
-                                    <img src="{{ asset($item->product->image) }}" alt="{{ $item->product_name }}">
+                                    <img
+                                        src="{{ asset($item->product->image) }}"
+                                        alt="{{ $item->product_name }}"
+                                    >
                                 @else
-                                    <span>{{ $item->product->icon ?? '🌱' }}</span>
+                                    <span>
+                                        {{ $item->product->icon ?? '🌱' }}
+                                    </span>
                                 @endif
                             </div>
 
                             <div class="shopee-item-info">
+
                                 @if($item->product && $item->product->slug)
-                                    <a href="{{ route('products.show', $item->product->slug) }}" class="shopee-item-name">
+                                    <a
+                                        href="{{ route('products.show', $item->product->slug) }}"
+                                        class="shopee-item-name"
+                                    >
                                         {{ $item->product_name }}
                                     </a>
                                 @else
-                                    <span class="shopee-item-name">{{ $item->product_name }}</span>
+                                    <span class="shopee-item-name">
+                                        {{ $item->product_name }}
+                                    </span>
                                 @endif
 
                                 <div class="shopee-item-sub">
                                     {{ $item->product->category ?? 'Produk Pertanian' }}
+
                                     @if($item->product && $item->product->unit)
                                         • {{ $item->product->unit }}
                                     @endif
                                 </div>
 
-                                {{-- Jika produk ini sudah diberi penilaian --}}
+                                {{-- HASIL PENILAIAN --}}
                                 @if($item->rating)
                                     <div class="shopee-reviewed-box">
+
                                         <div class="shopee-star-rating">
                                             @for($i = 1; $i <= 5; $i++)
-                                                <i class="fa-solid fa-star" style="color: {{ $i <= $item->rating ? '#eab308' : '#cbd5e1' }};"></i>
+                                                <i
+                                                    class="fa-solid fa-star"
+                                                    style="color:{{ $i <= $item->rating ? '#eab308' : '#cbd5e1' }};"
+                                                ></i>
                                             @endfor
                                         </div>
+
                                         <div>
-                                            <strong>Penilaian Anda:</strong> {{ $item->review ?? 'Sangat puas!' }}
+                                            <strong>Penilaian Anda:</strong>
+                                            {{ $item->review ?? 'Sangat puas!' }}
                                         </div>
                                     </div>
+
                                 @elseif($order->shopee_status === 'selesai')
-                                    <div style="margin-top: 6px;">
-                                        <button type="button" class="shopee-btn-rate" onclick="openRatingModal({{ $item->id }}, '{{ addslashes($item->product_name) }}')">
-                                            <i class="fa-solid fa-star"></i> Beri Penilaian Produk Ini
+
+                                    <div style="margin-top:6px;">
+                                        <button
+                                            type="button"
+                                            class="shopee-btn-rate"
+                                            data-product-name="{{ $item->product_name }}"
+                                            onclick="openRatingModal({{ $item->id }}, this.dataset.productName)"
+                                        >
+                                            <i class="fa-solid fa-star"></i>
+                                            Beri Penilaian Produk Ini
                                         </button>
                                     </div>
                                 @endif
+
                             </div>
 
                             <div class="shopee-item-pricing">
-                                <div class="shopee-item-price">Rp{{ number_format($item->price, 0, ',', '.') }}</div>
-                                <div class="shopee-item-qty">x{{ $item->quantity }}</div>
+                                <div class="shopee-item-price">
+                                    Rp{{ number_format($item->price, 0, ',', '.') }}
+                                </div>
+
+                                <div class="shopee-item-qty">
+                                    x{{ $item->quantity }}
+                                </div>
                             </div>
                         </div>
+
                     @endforeach
                 </div>
 
-                {{-- Card Footer: Info Resi, Total Harga, & Action Buttons --}}
+                {{-- FOOTER KARTU --}}
                 <div class="shopee-card-footer">
+
                     <div class="shopee-meta-info">
-                        <span class="shopee-order-num">No. Pesanan: <strong>{{ $order->order_number }}</strong></span>
-                        <span style="font-size: 0.8rem; color: #94a3b8;">
-                            {{ $order->created_at->format('d M Y, H:i') }} • Metode: <strong>{{ $order->payment_method ?? 'Transfer' }}</strong>
+
+                        <span class="shopee-order-num">
+                            No. Pesanan:
+                            <strong>{{ $order->order_number }}</strong>
                         </span>
 
+                        <span style="
+                            font-size:0.8rem;
+                            color:#94a3b8;
+                        ">
+                            {{ $order->created_at->format('d M Y, H:i') }}
+
+                            • Metode:
+                            <strong>
+                                {{ $order->payment_method ?? 'Transfer' }}
+                            </strong>
+                        </span>
+
+                        {{-- INFORMASI RESI --}}
                         @if($order->tracking_number)
-                            <div style="margin-top: 4px;">
+                            <div style="margin-top:4px;">
                                 <span class="shopee-courier-tag">
-                                    <i class="fa-solid fa-truck"></i> {{ $order->shipping_courier ?? 'Kurir' }}: <strong>{{ $order->tracking_number }}</strong>
+
+                                    <i class="fa-solid fa-truck"></i>
+
+                                    {{ $order->shipping_courier ?? 'Kurir' }}:
+
+                                    <strong>
+                                        {{ $order->tracking_number }}
+                                    </strong>
                                 </span>
                             </div>
                         @endif
+
                     </div>
 
-                    <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
+                    <div style="
+                        display:flex;
+                        align-items:center;
+                        gap:1.5rem;
+                        flex-wrap:wrap;
+                    ">
+
                         <div class="shopee-total-box">
-                            <span class="shopee-total-label">Total Pesanan:</span>
-                            <span class="shopee-total-val">Rp{{ number_format($order->total, 0, ',', '.') }}</span>
+
+                            <span class="shopee-total-label">
+                                Total Pesanan:
+                            </span>
+
+                            <span class="shopee-total-val">
+                                Rp{{ number_format($order->total, 0, ',', '.') }}
+                            </span>
+
                         </div>
 
                         <div class="shopee-actions-bar">
-                            {{-- Action Belum Bayar --}}
+
+                            {{-- FITUR PEMBAYARAN --}}
                             @if($order->shopee_status === 'belum_bayar')
-                                <form action="{{ route('pesanan.cancel', $order->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pesanan ini?')">
-                                    @csrf
-                                    <button type="submit" class="shopee-btn-cancel">Batalkan</button>
-                                </form>
 
-                                <form action="{{ route('pesanan.pay', $order->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="shopee-btn-pay">
-                                        <i class="fa-solid fa-credit-card"></i> Bayar Sekarang
-                                    </button>
-                                </form>
+                                @if(!$cancelPending && !$cancelApproved)
+                                    <form
+                                        action="{{ route('pesanan.pay', $order->id) }}"
+                                        method="POST"
+                                    >
+                                        @csrf
+
+                                        <button
+                                            type="submit"
+                                            class="shopee-btn-pay"
+                                        >
+                                            <i class="fa-solid fa-credit-card"></i>
+                                            Bayar Sekarang
+                                        </button>
+                                    </form>
+                                @endif
+
                             @endif
 
-                            {{-- Action Dikemas --}}
+                            {{-- PESANAN SEDANG DIKEMAS --}}
                             @if($order->shopee_status === 'dikemas')
-                                @if($seller && $seller->id !== auth()->id())
-                                    <a href="{{ route('chat.index', ['user_id' => $seller->id]) }}" class="shopee-btn-cancel" style="text-decoration:none;">
-                                        <i class="fa-solid fa-comment-dots"></i> Tanya Penjual
+
+                                @if($seller && (int) $seller->id !== (int) auth()->id())
+                                    <a
+                                        href="{{ route('chat.index', ['user_id' => $seller->id]) }}"
+                                        class="shopee-btn-cancel"
+                                        style="text-decoration:none;"
+                                    >
+                                        <i class="fa-solid fa-comment-dots"></i>
+                                        Tanya Penjual
                                     </a>
                                 @endif
-                                <span style="font-size: 0.82rem; color: #2563eb; font-weight: 600;">
-                                    <i class="fa-solid fa-clock"></i> Sedang dikemas oleh penjual
+
+                                <span style="
+                                    font-size:0.82rem;
+                                    color:#2563eb;
+                                    font-weight:600;
+                                ">
+                                    <i class="fa-solid fa-clock"></i>
+                                    Sedang dikemas oleh penjual
                                 </span>
+
                             @endif
 
-                            {{-- Action Dikirim --}}
+                            {{-- =====================================
+                                 SISTEM PEMBATALAN MAKSIMAL 3 KALI
+                                 ===================================== --}}
+
+                            @if($isCancelableStage)
+
+                                {{-- MASIH MENUNGGU SELLER --}}
+                                @if($cancelPending || $cancelApproved)
+
+                                    <span class="cancel-request-status waiting">
+                                        <i class="fa-solid fa-hourglass-half"></i>
+
+                                        {{ $cancelPending
+                                            ? 'Menunggu Persetujuan Penjual'
+                                            : 'Menunggu Persetujuan Penjual Lain'
+                                        }}
+
+                                        ({{ $cancelAttempts }}/3)
+                                    </span>
+
+                                {{-- SUDAH 3 KALI PENGAJUAN --}}
+                                @elseif($cancelLimitReached)
+
+                                    @if($cancelRejected)
+                                        <span class="cancel-request-status rejected">
+                                            <i class="fa-solid fa-circle-xmark"></i>
+                                            Pengajuan Terakhir Ditolak
+                                        </span>
+                                    @endif
+
+                                    <span class="cancel-attempt-badge limit">
+                                        <i class="fa-solid fa-lock"></i>
+                                        Batas Pengajuan Tercapai (3/3)
+                                    </span>
+
+                                {{-- BOLEH MENGAJUKAN / MENGAJUKAN ULANG --}}
+                                @elseif($canRequestCancel)
+
+                                    {{-- TAMPILKAN PENOLAKAN SEBELUMNYA --}}
+                                    @if($cancelRejected)
+
+                                        <span class="cancel-request-status rejected">
+                                            <i class="fa-solid fa-circle-xmark"></i>
+                                            Pengajuan {{ $cancelAttempts }}/3 Ditolak
+                                        </span>
+
+                                    @endif
+
+                                    <form
+                                        class="cancel-request-form"
+                                        action="{{ route('pesanan.cancel', $order->id) }}"
+                                        method="POST"
+                                        onsubmit="return confirm('Yakin ingin mengajukan pembatalan? Pengajuan {{ $nextCancelAttempt }}/3 akan dikirim kepada penjual.');"
+                                    >
+                                        @csrf
+
+                                        <label
+                                            for="cancel-reason-{{ $order->id }}"
+                                            style="
+                                                position:absolute;
+                                                width:1px;
+                                                height:1px;
+                                                overflow:hidden;
+                                                clip:rect(0,0,0,0);
+                                            "
+                                        >
+                                            Alasan pembatalan
+                                        </label>
+
+                                        <select
+                                            class="cancel-reason-select"
+                                            id="cancel-reason-{{ $order->id }}"
+                                            name="reason"
+                                            required
+                                        >
+                                            <option value="">
+                                                Pilih alasan pembatalan
+                                            </option>
+
+                                            <option value="Salah memilih produk">
+                                                Salah memilih produk
+                                            </option>
+
+                                            <option value="Ingin mengubah pesanan">
+                                                Ingin mengubah pesanan
+                                            </option>
+
+                                            <option value="Tidak jadi membeli">
+                                                Tidak jadi membeli
+                                            </option>
+
+                                            <option value="Alasan lainnya">
+                                                Alasan lainnya
+                                            </option>
+                                        </select>
+
+                                        <button
+                                            type="submit"
+                                            class="shopee-btn-cancel {{ $cancelAttempts > 0 ? 'cancel-retry-btn' : '' }}"
+                                        >
+                                            <i class="fa-solid fa-xmark"></i>
+
+                                            @if($cancelAttempts > 0)
+                                                Ajukan Ulang ({{ $nextCancelAttempt }}/3)
+                                            @else
+                                                Ajukan Pembatalan (1/3)
+                                            @endif
+                                        </button>
+
+                                    </form>
+
+                                    {{-- INFORMASI SISA KESEMPATAN --}}
+                                    @if($cancelAttempts > 0)
+                                        <span class="cancel-attempt-badge">
+                                            <i class="fa-solid fa-rotate"></i>
+                                            Sisa {{ $remainingCancelAttempts }} Kesempatan
+                                        </span>
+                                    @endif
+
+                                {{-- WORKFLOW BELUM SIAP --}}
+                                @elseif(!$cancellationWorkflowReady)
+
+                                    <span class="cancel-request-help">
+                                        Fitur pengajuan pembatalan sedang
+                                        dihubungkan ke persetujuan penjual.
+                                    </span>
+
+                                @endif
+
+                            @endif
+
+                            {{-- PESANAN DALAM PENGIRIMAN --}}
                             @if($order->shopee_status === 'dikirim')
-                                @if($seller && $seller->id !== auth()->id())
-                                    <a href="{{ route('chat.index', ['user_id' => $seller->id]) }}" class="shopee-btn-cancel" style="text-decoration:none;">
-                                        <i class="fa-solid fa-comment-dots"></i> Chat Penjual
+
+                                @if($seller && (int) $seller->id !== (int) auth()->id())
+                                    <a
+                                        href="{{ route('chat.index', ['user_id' => $seller->id]) }}"
+                                        class="shopee-btn-cancel"
+                                        style="text-decoration:none;"
+                                    >
+                                        <i class="fa-solid fa-comment-dots"></i>
+                                        Chat Penjual
                                     </a>
                                 @endif
 
-                                <form action="{{ route('pesanan.confirm', $order->id) }}" method="POST" onsubmit="return confirm('Pastikan barang sudah Anda terima dengan baik sebelum konfirmasi!')">
+                                <form
+                                    action="{{ route('pesanan.confirm', $order->id) }}"
+                                    method="POST"
+                                    onsubmit="return confirm('Pastikan barang sudah Anda terima dengan baik sebelum konfirmasi!')"
+                                >
                                     @csrf
-                                    <button type="submit" class="shopee-btn-receive">
-                                        <i class="fa-solid fa-circle-check"></i> Pesanan Diterima
+
+                                    <button
+                                        type="submit"
+                                        class="shopee-btn-receive"
+                                    >
+                                        <i class="fa-solid fa-circle-check"></i>
+                                        Pesanan Diterima
                                     </button>
                                 </form>
+
                             @endif
 
-                            {{-- Action Selesai --}}
+                            {{-- PESANAN SELESAI --}}
                             @if($order->shopee_status === 'selesai')
-                                <a href="/#produk" class="shopee-btn-cancel" style="text-decoration:none; color:#166534; border-color:#bbf7d0; background:#f0fdf4;">
-                                    <i class="fa-solid fa-rotate-right"></i> Beli Lagi
+
+                                <a
+                                    href="/#produk"
+                                    class="shopee-btn-cancel"
+                                    style="
+                                        text-decoration:none;
+                                        color:#166534;
+                                        border-color:#bbf7d0;
+                                        background:#f0fdf4;
+                                    "
+                                >
+                                    <i class="fa-solid fa-rotate-right"></i>
+                                    Beli Lagi
                                 </a>
+
                             @endif
+
+                            {{-- PENGEMBALIAN DANA --}}
+                            @if(
+                                $order->shopee_status === 'dibatalkan' &&
+                                $order->refund_status === 'pending'
+                            )
+
+                                <span class="cancel-request-status refund">
+                                    <i class="fa-solid fa-wallet"></i>
+                                    Pengembalian Dana Perlu Diproses
+                                </span>
+
+                            @endif
+
                         </div>
                     </div>
                 </div>
 
             </div>
+
         @empty
+
+            {{-- TIDAK ADA PESANAN --}}
             <div class="shopee-empty-state">
+
                 <span class="shopee-empty-icon">📦</span>
-                <h3 style="font-size: 1.25rem; font-weight: 800; color: #1e3a29; margin-bottom: 0.5rem;">
-                    Belum Ada Pesanan di Tab "{{ ucfirst(str_replace('_', ' ', $statusTab)) }}"
+
+                <h3 style="
+                    font-size:1.25rem;
+                    font-weight:800;
+                    color:#1e3a29;
+                    margin-bottom:0.5rem;
+                ">
+                    Belum Ada Pesanan di Tab
+                    "{{ ucfirst(str_replace('_', ' ', $statusTab)) }}"
                 </h3>
-                <p style="color: #64748b; font-size: 0.95rem; max-width: 420px; margin: 0 auto 1.5rem;">
-                    Yuk jelajahi berbagai produk pertanian, bibit tanaman, pupuk organik, dan alat tani di TaniMart!
+
+                <p style="
+                    color:#64748b;
+                    font-size:0.95rem;
+                    max-width:420px;
+                    margin:0 auto 1.5rem;
+                ">
+                    Yuk jelajahi berbagai produk pertanian,
+                    bibit tanaman, pupuk organik,
+                    dan alat tani di TaniMart!
                 </p>
-                <a href="/#produk" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 6px;">
-                    <i class="fa-solid fa-basket-shopping"></i> Mulai Belanja Sekarang →
+
+                <a
+                    href="/#produk"
+                    class="btn btn-primary"
+                    style="
+                        display:inline-flex;
+                        align-items:center;
+                        gap:6px;
+                    "
+                >
+                    <i class="fa-solid fa-basket-shopping"></i>
+                    Mulai Belanja Sekarang →
                 </a>
+
             </div>
+
         @endforelse
 
     </main>
 
-    {{-- Rating & Review Modal --}}
+    {{-- RATING DAN REVIEW MODAL --}}
     <div class="rating-modal-backdrop" id="ratingModal">
+
         <div class="rating-modal-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <h3 style="margin: 0; font-size: 1.2rem; color: #1e293b;">
-                    <i class="fa-solid fa-star" style="color: #eab308;"></i> Beri Penilaian
+
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                margin-bottom:1rem;
+            ">
+
+                <h3 style="
+                    margin:0;
+                    font-size:1.2rem;
+                    color:#1e293b;
+                ">
+                    <i
+                        class="fa-solid fa-star"
+                        style="color:#eab308;"
+                    ></i>
+                    Beri Penilaian
                 </h3>
-                <span style="cursor: pointer; font-size: 1.2rem; color: #94a3b8;" onclick="closeRatingModal()">✕</span>
+
+                <span
+                    style="
+                        cursor:pointer;
+                        font-size:1.2rem;
+                        color:#94a3b8;
+                    "
+                    onclick="closeRatingModal()"
+                >✕</span>
+
             </div>
 
-            <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 0.5rem;">
-                Produk: <strong id="modalProductName" style="color: #1e293b;">-</strong>
+            <p style="
+                font-size:0.9rem;
+                color:#64748b;
+                margin-bottom:0.5rem;
+            ">
+                Produk:
+                <strong
+                    id="modalProductName"
+                    style="color:#1e293b;"
+                >-</strong>
             </p>
 
-            <form id="ratingForm" action="" method="POST">
+            <form
+                id="ratingForm"
+                action=""
+                method="POST"
+            >
                 @csrf
-                <input type="hidden" name="rating" id="ratingInput" value="5">
+
+                <input
+                    type="hidden"
+                    name="rating"
+                    id="ratingInput"
+                    value="5"
+                >
 
                 <div class="star-picker" id="starPicker">
-                    <i class="fa-solid fa-star selected" data-val="1"></i>
-                    <i class="fa-solid fa-star selected" data-val="2"></i>
-                    <i class="fa-solid fa-star selected" data-val="3"></i>
-                    <i class="fa-solid fa-star selected" data-val="4"></i>
-                    <i class="fa-solid fa-star selected" data-val="5"></i>
+
+                    <i
+                        class="fa-solid fa-star selected"
+                        data-val="1"
+                    ></i>
+
+                    <i
+                        class="fa-solid fa-star selected"
+                        data-val="2"
+                    ></i>
+
+                    <i
+                        class="fa-solid fa-star selected"
+                        data-val="3"
+                    ></i>
+
+                    <i
+                        class="fa-solid fa-star selected"
+                        data-val="4"
+                    ></i>
+
+                    <i
+                        class="fa-solid fa-star selected"
+                        data-val="5"
+                    ></i>
+
                 </div>
-                <p id="starDesc" style="text-align: center; font-size: 0.88rem; font-weight: 700; color: #eab308; margin-bottom: 1.2rem;">
+
+                <p
+                    id="starDesc"
+                    style="
+                        text-align:center;
+                        font-size:0.88rem;
+                        font-weight:700;
+                        color:#eab308;
+                        margin-bottom:1.2rem;
+                    "
+                >
                     ⭐⭐⭐⭐⭐ Sangat Puas!
                 </p>
 
-                <div style="margin-bottom: 1.25rem;">
-                    <label style="display: block; font-size: 0.88rem; font-weight: 600; color: #334155; margin-bottom: 0.4rem;">
+                <div style="margin-bottom:1.25rem;">
+
+                    <label style="
+                        display:block;
+                        font-size:0.88rem;
+                        font-weight:600;
+                        color:#334155;
+                        margin-bottom:0.4rem;
+                    ">
                         Tulis Ulasan untuk Penjual:
                     </label>
-                    <textarea 
-                        name="review" 
-                        rows="3" 
-                        class="form-control" 
-                        placeholder="Bagikan pengalamanmu mengenai kualitas produk, kecepatan pengemasan, dan respon penjual..." 
-                        style="width: 100%; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 0.75rem; font-size: 0.9rem; box-sizing: border-box; resize: none;"
+
+                    <textarea
+                        name="review"
+                        rows="3"
+                        class="form-control"
+                        placeholder="Bagikan pengalamanmu mengenai kualitas produk, kecepatan pengemasan, dan respon penjual..."
+                        style="
+                            width:100%;
+                            border:1.5px solid #cbd5e1;
+                            border-radius:12px;
+                            padding:0.75rem;
+                            font-size:0.9rem;
+                            box-sizing:border-box;
+                            resize:none;
+                        "
                     ></textarea>
+
                 </div>
 
-                <div style="display: flex; gap: 8px; justify-content: flex-end;">
-                    <button type="button" class="btn btn-secondary" onclick="closeRatingModal()">Batal</button>
-                    <button type="submit" class="btn btn-primary" style="background: #34754a;">
-                        <i class="fa-solid fa-paper-plane"></i> Kirim Penilaian
+                <div style="
+                    display:flex;
+                    gap:8px;
+                    justify-content:flex-end;
+                ">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        onclick="closeRatingModal()"
+                    >
+                        Batal
                     </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                        style="background:#34754a;"
+                    >
+                        <i class="fa-solid fa-paper-plane"></i>
+                        Kirim Penilaian
+                    </button>
+
                 </div>
             </form>
         </div>
@@ -789,10 +1514,24 @@
     @include('partials.footer')
 
     <script>
+        // NOTIFIKASI OTOMATIS HILANG
+        setTimeout(() => {
+            const toast = document.getElementById('toastMsg');
+            if (toast) {
+                toast.remove();
+            }
+        }, 5000);
+
+        // MODAL RATING
         function openRatingModal(itemId, productName) {
-            document.getElementById('modalProductName').textContent = productName;
-            document.getElementById('ratingForm').action = '/pesanan/item/' + itemId + '/nilai';
+            document.getElementById('modalProductName').textContent =
+                productName;
+
+            document.getElementById('ratingForm').action =
+                '/pesanan/item/' + itemId + '/nilai';
+
             document.getElementById('ratingModal').classList.add('show');
+
             setRating(5);
         }
 
@@ -810,7 +1549,9 @@
 
         function setRating(val) {
             document.getElementById('ratingInput').value = val;
+
             const stars = document.querySelectorAll('#starPicker i');
+
             stars.forEach((star, index) => {
                 if (index < val) {
                     star.classList.add('selected');
@@ -818,7 +1559,9 @@
                     star.classList.remove('selected');
                 }
             });
-            document.getElementById('starDesc').textContent = starDescMap[val] || '';
+
+            document.getElementById('starDesc').textContent =
+                starDescMap[val] || '';
         }
 
         document.querySelectorAll('#starPicker i').forEach(star => {
@@ -828,6 +1571,5 @@
             });
         });
     </script>
-
 </body>
 </html>

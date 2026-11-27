@@ -20,110 +20,126 @@ class Order extends Model
         'paid_at',
         'shipped_at',
         'completed_at',
+        'inventory_deducted',
+        'cancellation_reason',
+        'refund_status',
     ];
 
     protected $casts = [
         'paid_at' => 'datetime',
         'shipped_at' => 'datetime',
         'completed_at' => 'datetime',
+        'inventory_deducted' => 'boolean',
     ];
 
-    /**
-     * Relasi ke pembeli (User)
-     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Item-item produk dalam pesanan ini
-     */
     public function items()
     {
         return $this->hasMany(OrderItem::class);
     }
 
-    /**
-     * Helper status Shopee-style:
-     * belum_bayar, dikemas, dikirim, selesai, dibatalkan
-     */
-    public function getShopeeStatusAttribute()
+    public function cancellationApprovals()
     {
-        $st = strtolower($this->status);
-        if ($st === 'pending' || $st === 'belum_bayar') {
-            return 'belum_bayar';
-        }
-        if ($st === 'diproses' || $st === 'dikemas') {
-            return 'dikemas';
-        }
-        if ($st === 'dikirim') {
-            return 'dikirim';
-        }
-        if ($st === 'selesai') {
-            return 'selesai';
-        }
-        if ($st === 'dibatalkan' || $st === 'batal') {
-            return 'dibatalkan';
-        }
-        return $st;
+        return $this->hasMany(OrderCancellationApproval::class);
     }
 
-    /**
-     * Label dan Icon status Shopee-style
-     */
+    // Tetap menggunakan tab Dikemas untuk kedua tahap.
+    public function getShopeeStatusAttribute()
+    {
+        $status = strtolower($this->status ?? '');
+
+        if (in_array($status, ['pending', 'belum_bayar'], true)) {
+            return 'belum_bayar';
+        }
+
+        if (in_array($status, ['dikemas', 'diproses'], true)) {
+            return 'dikemas';
+        }
+
+        if (in_array($status, ['dibatalkan', 'batal'], true)) {
+            return 'dibatalkan';
+        }
+
+        return $status;
+    }
+
     public function getStatusInfoAttribute()
     {
-        $statusMap = [
+        $map = [
             'belum_bayar' => [
                 'label' => 'Belum Bayar',
                 'badge' => 'status-pending',
                 'icon' => 'fa-solid fa-wallet',
                 'color' => '#d97706',
                 'bg' => '#fef3c7',
-                'desc' => 'Menunggu pembayaran dari pembeli'
+                'desc' => 'Menunggu pembayaran dari pembeli',
             ],
+
             'dikemas' => [
-                'label' => 'Dikemas',
+                'label' => 'Menunggu Diproses',
+                'badge' => 'status-diproses',
+                'icon' => 'fa-solid fa-clock',
+                'color' => '#2563eb',
+                'bg' => '#dbeafe',
+                'desc' => 'Penjual belum memulai proses pesanan; pembeli dapat membatalkan langsung',
+            ],
+
+            'diproses' => [
+                'label' => 'Sedang Dikemas',
                 'badge' => 'status-diproses',
                 'icon' => 'fa-solid fa-box-open',
                 'color' => '#2563eb',
                 'bg' => '#dbeafe',
-                'desc' => 'Penjual sedang menyiapkan & mengemas paket'
+                'desc' => 'Penjual sedang memproses; pembatalan memerlukan persetujuan',
             ],
+
             'dikirim' => [
                 'label' => 'Dikirim',
                 'badge' => 'status-dikirim',
                 'icon' => 'fa-solid fa-truck-fast',
                 'color' => '#0284c7',
                 'bg' => '#e0f2fe',
-                'desc' => 'Pesanan sedang dalam perjalanan ke alamat tujuan'
+                'desc' => 'Pesanan dalam perjalanan',
             ],
+
             'selesai' => [
                 'label' => 'Selesai',
                 'badge' => 'status-selesai',
                 'icon' => 'fa-solid fa-circle-check',
                 'color' => '#16a34a',
                 'bg' => '#dcfce7',
-                'desc' => 'Pesanan telah diterima oleh pembeli'
+                'desc' => 'Pesanan diterima pembeli',
             ],
+
             'dibatalkan' => [
                 'label' => 'Dibatalkan',
                 'badge' => 'status-dibatalkan',
                 'icon' => 'fa-solid fa-circle-xmark',
                 'color' => '#dc2626',
                 'bg' => '#fee2e2',
-                'desc' => 'Pesanan telah dibatalkan'
+                'desc' => 'Pesanan telah dibatalkan',
             ],
         ];
 
-        return $statusMap[$this->shopee_status] ?? [
-            'label' => ucfirst($this->status),
+        $status = strtolower($this->status ?? '');
+
+        if (in_array($status, ['pending', 'belum_bayar'], true)) {
+            $status = 'belum_bayar';
+        } elseif ($status === 'batal') {
+            $status = 'dibatalkan';
+        }
+
+        return $map[$status] ?? [
+            'label' => ucfirst($status),
             'badge' => 'status-pending',
             'icon' => 'fa-solid fa-circle-info',
             'color' => '#64748b',
             'bg' => '#f1f5f9',
-            'desc' => '-'
+            'desc' => '-',
         ];
     }
 }

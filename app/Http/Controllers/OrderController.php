@@ -4,26 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
-    /**
-     * Halaman "Pesanan Saya" (Sisi Pembeli ala Shopee)
-     * TERISOLASI 100% PER AKUN: Hanya pesanan dengan user_id milik akun yang sedang login.
-     */
+    // Daftar pesanan pembeli; tetap terisolasi per akun.
     public function myOrders(Request $request)
     {
         $userId = auth()->id();
         $statusTab = $request->query('tab', 'semua');
 
-        // STRICT ISOLASI AKUN: Hanya ambil pesanan yang dibuat oleh akun saat ini
         $query = Order::with(['items.product', 'items.seller'])
             ->where('user_id', $userId);
 
-        // Filter tab Shopee
         if ($statusTab === 'belum_bayar') {
             $query->whereIn('status', ['belum_bayar', 'pending']);
         } elseif ($statusTab === 'dikemas') {
@@ -38,85 +33,109 @@ class OrderController extends Controller
 
         $orders = $query->latest()->get();
 
-        // Hitung badge counter per tab HANYA untuk akun ini
         $counts = [
             'semua' => Order::where('user_id', $userId)->count(),
-            'belum_bayar' => Order::where('user_id', $userId)->whereIn('status', ['belum_bayar', 'pending'])->count(),
-            'dikemas' => Order::where('user_id', $userId)->whereIn('status', ['dikemas', 'diproses'])->count(),
-            'dikirim' => Order::where('user_id', $userId)->where('status', 'dikirim')->count(),
-            'selesai' => Order::where('user_id', $userId)->where('status', 'selesai')->count(),
-            'dibatalkan' => Order::where('user_id', $userId)->whereIn('status', ['dibatalkan', 'batal'])->count(),
+            'belum_bayar' => Order::where('user_id', $userId)
+                ->whereIn('status', ['belum_bayar', 'pending'])->count(),
+            'dikemas' => Order::where('user_id', $userId)
+                ->whereIn('status', ['dikemas', 'diproses'])->count(),
+            'dikirim' => Order::where('user_id', $userId)
+                ->where('status', 'dikirim')->count(),
+            'selesai' => Order::where('user_id', $userId)
+                ->where('status', 'selesai')->count(),
+            'dibatalkan' => Order::where('user_id', $userId)
+                ->whereIn('status', ['dibatalkan', 'batal'])->count(),
         ];
 
         return view('pesanan.saya', compact('orders', 'statusTab', 'counts'));
     }
 
-    /**
-     * Simulasi Bayar Sekarang (Pembeli bayar pesanan)
-     */
+    // Simulasi pembayaran (tidak terhubung payment gateway).
     public function pay(Order $order)
     {
-        // Keamanan: Pastikan hanya pemilik pesanan yang bisa bayar
-        if ($order->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
-            abort(403, 'Anda tidak memiliki hak untuk mengakses pesanan ini.');
-        }
+        $result = DB::transaction(function () use ($order) {
+            $locked = Order::whereKey($order->id)->lockForUpdate()->firstOrFail();
 
-        $order->update([
-            'status' => 'dikemas',
-            'paid_at' => now(),
-        ]);
+            abort_unless((int) $locked->user_id === (int) auth()->id()
+                || auth()->user()->isAdmin(), 403);
 
-        return back()->with('success', "Pembayaran untuk pesanan {$order->order_number} berhasil dikonfirmasi! Pesanan sekarang sedang dikemas oleh penjual.");
+            if (!in_array($locked->status, ['belum_bayar', 'pending'], true)) {
+                return ['error', 'Pesanan ini tidak berada pada tahap menunggu pembayaran.'];
+            }
+
+            $locked->update([
+                'status' => 'dikemas',
+                'paid_at' => now(),
+            ]);
+
+            return ['success', "Pembayaran simulasi {$locked->order_number} tercatat. Menunggu penjual memproses."];
+        }, 3);
+
+        return back()->with($result[0], $result[1]);
     }
 
-    /**
-     * Batalkan Pesanan (Pembeli)
-     */
-    public function cancel(Order $order)
+    // Kompatibilitas dengan route batal lama: satu alur pembatalan saja.
+    public function cancel(Request $request, Order $order)
     {
-        // Keamanan: Pastikan hanya pemilik pesanan yang bisa membatalkan
-        if ($order->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
-            abort(403, 'Anda tidak memiliki hak untuk membatalkan pesanan ini.');
-        }
-
-        if (in_array($order->shopee_status, ['dikirim', 'selesai'])) {
-            return back()->with('error', 'Pesanan yang sudah dikirim atau selesai tidak dapat dibatalkan.');
-        }
-
-        $order->update([
-            'status' => 'dibatalkan',
-        ]);
-
-        return back()->with('success', "Pesanan {$order->order_number} berhasil dibatalkan.");
+        return app(CancellationController::class)->requestCancel($request, $order);
     }
 
-    /**
-     * Konfirmasi Pesanan Diterima (Pembeli)
-     */
+    // Seller menandai pesanan mulai dikerjakan.
+    public function startProcessing(Order $order)
+    {
+        $result = DB::transaction(function () use ($order) {
+            $locked = Order::whereKey($order->id)->lockForUpdate()->firstOrFail();
+
+            $isSeller = $locked->items()
+                ->where('seller_id', auth()->id())
+                ->exists();
+
+            abort_unless($isSeller, 403);
+
+            if ($locked->status !== 'dikemas' || $locked->shipped_at !== null) {
+                return ['error', 'Pesanan tidak dapat mulai diproses pada tahap ini.'];
+            }
+
+            $locked->update(['status' => 'diproses']);
+
+            return ['success', 'Pesanan mulai diproses. Pembatalan selanjutnya memerlukan persetujuan penjual.'];
+        }, 3);
+
+        return back()->with($result[0], $result[1]);
+    }
+
     public function confirmReceived(Order $order)
     {
-        // Keamanan: Pastikan hanya pemilik pesanan yang bisa konfirmasi penerimaan
-        if ($order->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
-            abort(403, 'Anda tidak memiliki hak untuk mengubah status pesanan ini.');
-        }
+        $result = DB::transaction(function () use ($order) {
+            $locked = Order::whereKey($order->id)->lockForUpdate()->firstOrFail();
 
-        $order->update([
-            'status' => 'selesai',
-            'completed_at' => now(),
-        ]);
+            abort_unless((int) $locked->user_id === (int) auth()->id()
+                || auth()->user()->isAdmin(), 403);
 
-        return back()->with('success', "Terima kasih! Pesanan {$order->order_number} telah selesai. Silakan berikan penilaian untuk toko ini.");
+            if ($locked->status !== 'dikirim') {
+                return ['error', 'Pesanan hanya dapat dikonfirmasi setelah dikirim.'];
+            }
+
+            $locked->update([
+                'status' => 'selesai',
+                'completed_at' => now(),
+            ]);
+
+            return ['success', "Pesanan {$locked->order_number} selesai. Terima kasih!"];
+        }, 3);
+
+        return back()->with($result[0], $result[1]);
     }
 
-    /**
-     * Beri Penilaian / Rating & Review (Pembeli)
-     */
     public function submitReview(Request $request, OrderItem $item)
     {
-        // Pastikan hanya pembeli pesanan ini yang bisa menilai
         $order = $item->order;
-        if ($order->user_id !== auth()->id() && !auth()->user()->isAdmin()) {
-            abort(403, 'Akses ditolak.');
+
+        abort_unless((int) $order->user_id === (int) auth()->id()
+            || auth()->user()->isAdmin(), 403);
+
+        if ($order->status !== 'selesai') {
+            return back()->with('error', 'Penilaian hanya bisa diberikan setelah pesanan selesai.');
         }
 
         $validated = $request->validate([
@@ -130,20 +149,17 @@ class OrderController extends Controller
             'reviewed_at' => now(),
         ]);
 
-        return back()->with('success', "Ulasan dan bintang untuk {$item->product_name} berhasil dikirim! Terima kasih atas penilaian Anda.");
+        return back()->with('success', "Ulasan untuk {$item->product_name} berhasil dikirim!");
     }
 
-    /**
-     * Halaman "Pesanan Masuk" Toko (Sisi Penjual)
-     * TERISOLASI 100% PER TOKO: Penjual hanya melihat pesanan produk miliknya sendiri.
-     */
+    // Daftar pesanan penjual, hanya item miliknya yang ditampilkan.
     public function sellerOrders(Request $request)
     {
         $sellerId = auth()->id();
         $statusTab = $request->query('tab', 'semua');
 
-        // Ambil ID pesanan yang memuat produk milik penjual ini
-        $orderIds = OrderItem::where('seller_id', $sellerId)->pluck('order_id')->unique();
+        $orderIds = OrderItem::where('seller_id', $sellerId)
+            ->pluck('order_id')->unique();
 
         $query = Order::with(['user', 'items' => function ($q) use ($sellerId) {
             $q->where('seller_id', $sellerId)->with('product');
@@ -163,39 +179,56 @@ class OrderController extends Controller
 
         $counts = [
             'semua' => Order::whereIn('id', $orderIds)->count(),
-            'perlu_dikemas' => Order::whereIn('id', $orderIds)->whereIn('status', ['dikemas', 'diproses', 'belum_bayar', 'pending'])->count(),
-            'dikirim' => Order::whereIn('id', $orderIds)->where('status', 'dikirim')->count(),
-            'selesai' => Order::whereIn('id', $orderIds)->where('status', 'selesai')->count(),
+            'perlu_dikemas' => Order::whereIn('id', $orderIds)
+                ->whereIn('status', ['dikemas', 'diproses', 'belum_bayar', 'pending'])->count(),
+            'dikirim' => Order::whereIn('id', $orderIds)
+                ->where('status', 'dikirim')->count(),
+            'selesai' => Order::whereIn('id', $orderIds)
+                ->where('status', 'selesai')->count(),
         ];
 
         return view('pesanan.penjual', compact('orders', 'statusTab', 'counts'));
     }
 
-    /**
-     * Penjual Kirim Pesanan (Input Kurir & Resi)
-     */
+    // Pengiriman hanya setelah seller mulai memproses dan tak ada
+    // pengajuan pembatalan yang masih menunggu keputusan.
     public function shipOrder(Request $request, Order $order)
     {
-        // Pastikan penjual memiliki setidaknya 1 item di pesanan ini
-        $hasItem = $order->items()->where('seller_id', auth()->id())->exists();
-        if (!$hasItem && !auth()->user()->isAdmin()) {
-            abort(403, 'Akses ditolak.');
-        }
-
         $validated = $request->validate([
             'shipping_courier' => 'required|string|max:50',
             'tracking_number' => 'nullable|string|max:50',
         ]);
 
-        $trackingNumber = $validated['tracking_number'] ?? ('TMX-' . strtoupper(Str::random(10)));
+        $result = DB::transaction(function () use ($order, $validated) {
+            $locked = Order::whereKey($order->id)->lockForUpdate()->firstOrFail();
 
-        $order->update([
-            'status' => 'dikirim',
-            'shipping_courier' => $validated['shipping_courier'],
-            'tracking_number' => $trackingNumber,
-            'shipped_at' => now(),
-        ]);
+            $isSeller = $locked->items()
+                ->where('seller_id', auth()->id())
+                ->exists();
 
-        return back()->with('success', "Pesanan {$order->order_number} berhasil diproses dan dikirim dengan nomor resi {$trackingNumber}!");
+            abort_unless($isSeller, 403);
+
+            if ($locked->status !== 'diproses' || $locked->shipped_at !== null) {
+                return ['error', 'Klik Mulai Proses Pesanan terlebih dahulu.'];
+            }
+
+            if ($locked->cancellationApprovals()->where('status', 'pending')->exists()) {
+                return ['error', 'Pengiriman ditahan karena ada permintaan pembatalan.'];
+            }
+
+            $trackingNumber = $validated['tracking_number']
+                ?? ('TMX-' . strtoupper(Str::random(10)));
+
+            $locked->update([
+                'status' => 'dikirim',
+                'shipping_courier' => $validated['shipping_courier'],
+                'tracking_number' => $trackingNumber,
+                'shipped_at' => now(),
+            ]);
+
+            return ['success', "Pesanan {$locked->order_number} dikirim dengan resi {$trackingNumber}."];
+        }, 3);
+
+        return back()->with($result[0], $result[1]);
     }
 }
